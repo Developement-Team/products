@@ -16,7 +16,6 @@ from service.models import Product
 # Import Flask application
 from . import app
 
-
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -30,7 +29,6 @@ def index():
                 version="1.0"),
         status.HTTP_200_OK,
     )
-
 
 ######################################################################
 
@@ -72,12 +70,9 @@ def create_products():
     app.logger.info("Product with ID [%s] created.", product.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
-
-
 ######################################################################
 # LIST ALL PRODUCTS
 ######################################################################
-
 @app.route("/products", methods=["GET"])
 def list_products():
     """Returns all of the Products"""
@@ -96,9 +91,6 @@ def list_products():
     app.logger.info("Returning %d products", len(results))
     return jsonify(results), status.HTTP_200_OK    
 
-
-
-
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
@@ -106,7 +98,6 @@ def init_db():
     """ Initializes the SQLAlchemy app """
     global app
     Product.init_db(app)
-
 
 def check_content_type(media_type):
     """Checks that the media type is correct"""

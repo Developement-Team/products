@@ -20,7 +20,6 @@ DATABASE_URI = os.getenv(
 )
 BASE_URL = "/products"
 
-
 ######################################################################
 #  T E S T   P R O D U C T  S E R V I C E
 ######################################################################
@@ -139,7 +138,6 @@ class TestYourResourceServer(TestCase):
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     # def test_create_product_bad_price(self):
     #     """It should not Create a Product with bad price data"""
     #     test_product = ProductFactory()
@@ -147,4 +145,3 @@ class TestYourResourceServer(TestCase):
     #     # change price to a price which is not in the specified range
     #     test_product.price = -5.0
     #     response = self.client.post(BASE_URL, json=test_product.serialize())
-

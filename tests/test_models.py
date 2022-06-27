@@ -19,7 +19,6 @@ DATABASE_URI = os.getenv(
 #  Product   M O D E L   T E S T   C A S E S
 ######################################################################
 
-
 class TestProduct(unittest.TestCase):
     """ Test Cases for Product Model """
 
@@ -124,7 +123,6 @@ class TestProduct(unittest.TestCase):
         data["price"] = "string!"
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
-
 
     def test_list_all_products(self):
         """It should List all Products in the database"""
