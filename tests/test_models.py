@@ -2,7 +2,7 @@
 Test cases for Product Model
 """
 # from itertools import product
-from itertools import product
+
 import os
 import logging
 import unittest

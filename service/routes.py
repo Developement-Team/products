@@ -8,7 +8,7 @@ Describe what your service does here
 # import logging
 # from flask import Flask, request, url_for, jsonify, make_response, abort
 # from itertools import product
-from itertools import product
+
 from flask import url_for, jsonify, request, abort
 from .utils import status  # HTTP Status Codes
 from service.models import Product
@@ -33,34 +33,14 @@ def index():
 
 
 ######################################################################
-# LIST ALL PRODUCTS
-######################################################################
-@app.route("/products", methods=["GET"])
-def list_products():
-    """Returns all of the Products"""
-    app.logger.info("Request for product list")
-    products = []
-    category = request.args.get("category")
-    name = request.args.get("name")
-    if category:
-        products = Product.find_by_category(category)
-    elif name:
-        products = Product.find_by_name(name)
-    else:
-        products = Product.all()
 
-    results = [product.serialize() for product in products]
-    app.logger.info("Returning %d products", len(results))
-    return jsonify(results), status.HTTP_200_OK    
-
-
-######################################################################
 # RETRIEVE A PET
 ######################################################################
 @app.route("/pets/<int:product_id>", methods=["GET"])
 def get_products(product_id):
     """
     Retrieve a single Product
+
     This endpoint will return a Product based on it's id
     """
     app.logger.info("Request for product with id: %s", product_id)
@@ -111,4 +91,4 @@ def check_content_type(media_type):
     abort(
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         "Content-Type must be {}".format(media_type),
-    )
+

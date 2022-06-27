@@ -131,14 +131,6 @@ class TestYourResourceServer(TestCase):
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_get_product_list(self):
-        """It should Get a list of Products"""
-        self._create_products(5)
-        response = self.client.get(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), 5)
-
 
     # def test_create_product_bad_price(self):
     #     """It should not Create a Product with bad price data"""
@@ -147,4 +139,4 @@ class TestYourResourceServer(TestCase):
     #     # change price to a price which is not in the specified range
     #     test_product.price = -5.0
     #     response = self.client.post(BASE_URL, json=test_product.serialize())
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
