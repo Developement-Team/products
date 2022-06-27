@@ -7,11 +7,8 @@ Describe what your service does here
 # import sys
 # import logging
 # from flask import Flask, request, url_for, jsonify, make_response, abort
-<<<<<<< HEAD
 # from itertools import product
 
-=======
->>>>>>> master
 from flask import url_for, jsonify, request, abort
 from service.utils import status  # HTTP Status Codes
 from service.models import Product
