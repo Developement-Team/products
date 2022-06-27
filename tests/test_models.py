@@ -2,7 +2,7 @@
 Test cases for Product Model
 """
 # from itertools import product
-
+from itertools import product
 import os
 import logging
 import unittest
@@ -130,13 +130,14 @@ class TestProduct(unittest.TestCase):
         """It should List all Products in the database"""
         products = Product.all()
         self.assertEqual(products, [])
-        # Create 5 Pets
+        # Create 5 Products
         for i in range(5):
             product = ProductFactory()
             product.create()
         # See if we get back 5 products
         products = Product.all()
         self.assertEqual(len(products), 5)
+        
     # def test_invalid_name(self):
     #     """It should not make a product with invalid name"""
     #     data = {"id": 1, "name": "shoes", "description": "Relaxed Fit", "category":"men's clothing", "available":True}
