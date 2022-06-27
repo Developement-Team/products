@@ -1,7 +1,8 @@
 """
 Test cases for Product Model
-
 """
+# from itertools import product
+from itertools import product
 import os
 import logging
 import unittest
@@ -13,6 +14,7 @@ from tests.factories import ProductFactory
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
+
 ######################################################################
 #  Product   M O D E L   T E S T   C A S E S
 ######################################################################
@@ -48,6 +50,17 @@ class TestProduct(unittest.TestCase):
     ######################################################################
     #  T E S T   C A S E S
     ######################################################################
+
+    def test_create_a_product(self):
+        """It should Create a product and assert that it exists"""
+        product = Product(name="shirt", category="men's clothing", available=True, description='relaxed', price=20.0)
+        self.assertEqual(str(product), "<Product 'shirt' id=[None]>")
+        self.assertTrue(product is not None)
+        self.assertEqual(product.id, None)
+        self.assertEqual(product.name, "shirt")
+        self.assertEqual(product.category, "men's clothing")
+        self.assertEqual(product.available, True)
+        self.assertEqual(product.description, "relaxed")
 
     def test_XXXX(self):
         """ It should always be true """
@@ -111,6 +124,19 @@ class TestProduct(unittest.TestCase):
         data["price"] = "string!"
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
+
+
+    def test_list_all_products(self):
+        """It should List all Products in the database"""
+        products = Product.all()
+        self.assertEqual(products, [])
+        # Create 5 Pets
+        for i in range(5):
+            product = ProductFactory()
+            product.create()
+        # See if we get back 5 products
+        products = Product.all()
+        self.assertEqual(len(products), 5)
     # def test_invalid_name(self):
     #     """It should not make a product with invalid name"""
     #     data = {"id": 1, "name": "shoes", "description": "Relaxed Fit", "category":"men's clothing", "available":True}
