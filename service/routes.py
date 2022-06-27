@@ -9,6 +9,7 @@ Describe what your service does here
 # from flask import Flask, request, url_for, jsonify, make_response, abort
 # from itertools import product
 
+from itertools import product
 from flask import url_for, jsonify, request, abort
 from service.utils import status  # HTTP Status Codes
 from service.models import Product
@@ -91,6 +92,21 @@ def list_products():
     app.logger.info("Returning %d products", len(results))
     return jsonify(results), status.HTTP_200_OK    
 
+######################################################################
+# DELETE A PET
+######################################################################
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_products(product_id):
+    """Delete a Product 
+    This endpoint will delete a Product based the id specified in the path
+    """
+    app.logger.info("Request to delete product with id: %s", product_id)
+    product = Product.find(product_id)
+    if product:
+        product.delete()
+
+    app.logger.info("Product with ID [%s] delete complete.", product_id)
+    return "", status.HTTP_204_NO_CONTENT
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################

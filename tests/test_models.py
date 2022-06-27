@@ -140,6 +140,15 @@ class TestProduct(unittest.TestCase):
         # See if we get back 5 products
         products = Product.all()
         self.assertEqual(len(products), 5)
+
+    def test_delete_a_product(self):
+        """It should Delete a Product"""
+        product = ProductFactory()
+        product.create()
+        self.assertEqual(len(Product.all()), 1)
+        # delete the pet and make sure it isn't in the database
+        product.delete()
+        self.assertEqual(len(Product.all()), 0)    
         
     # def test_invalid_name(self):
     #     """It should not make a product with invalid name"""
