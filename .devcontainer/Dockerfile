@@ -6,6 +6,7 @@ RUN apt-get update && \
     apt-get install -y sudo vim make git zip tree curl wget jq && \
     apt-get autoremove -y && \
     apt-get clean -y
+RUN apt-get install -y chromium-driver python3-selenium
 
 # Create a user for development
 ARG USERNAME=vscode
