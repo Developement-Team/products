@@ -230,8 +230,9 @@ def update_rating_of_product(product_id):
             product.no_of_users_rated = 1
             product.rating = float(new_rating["rating"])
         else:
-            product.rating = float(product.rating * product.no_of_users_rated + new_rating["rating"])\
-             / (product.no_of_users_rated+1)
+            product.rating = float(
+                product.rating * product.no_of_users_rated + new_rating["rating"]
+            ) / (product.no_of_users_rated + 1)
             product.no_of_users_rated = product.no_of_users_rated + 1
         product.update()
         app.logger.info("Product with ID [%s] updated.", product.id)
