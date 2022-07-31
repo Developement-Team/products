@@ -8,7 +8,7 @@ from compare import expect
 
 @given('the following products')
 def step_impl(context):
-    """ Load the database with new pets """
+    """ Load the database with new products """
     # List all of the products and delete them one by one
     rest_endpoint = f"{context.BASE_URL}/products"
     context.resp = requests.get(rest_endpoint)
