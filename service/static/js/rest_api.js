@@ -120,17 +120,18 @@ $(function () {
             $("#search_results").empty();
             let table = '<table class="table table-striped" cellpadding="10">'
             table += '<thead><tr>'
-            table += '<th class="col-md-2">ID</th>'
+            table += '<th class="col-md-1">ID</th>'
             table += '<th class="col-md-2">Name</th>'
             table += '<th class="col-md-2">Category</th>'
+            table += '<th class="col-md-3">Description</th>'
             table += '<th class="col-md-2">Available</th>'
-            table += '<th class="col-md-2">Gender</th>'
-            table += '<th class="col-md-2">Birthday</th>'
+            table += '<th class="col-md-2">Price</th>'
+            table += '<th class="col-md-2">Rating</th>'
             table += '</tr></thead><tbody>'
             let firstProduct = "";
             for(let i = 0; i < res.length; i++) {
                 let product = res[i];
-                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.available}</td><td>${product.gender}</td><td>${product.birthday}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.description}</td><td>${product.available}</td><td>${product.price}</td><td>${product.rating}</td></tr>`;
                 if (i == 0) {
                     firstProduct = product;
                 }
