@@ -201,9 +201,7 @@ class TestYourResourceServer(TestCase):
             for product in products
             if product.rating is not None and product.rating >= test_rating
         ]
-        response = self.client.get(
-            BASE_URL, query_string=f"rating={str(test_rating)}"
-        )
+        response = self.client.get(BASE_URL, query_string=f"rating={str(test_rating)}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(rating_products))
@@ -226,16 +224,20 @@ class TestYourResourceServer(TestCase):
         test_price = products[0].price
         test_rating = int(products[0].rating)
         target_products = [
-            product for product in products
+            product
+            for product in products
             if product.price <= test_price and product.rating >= test_rating
         ]
-        response = self.client.get(f"{BASE_URL}?price={str(test_price)}&rating={str(test_rating)}")
+        response = self.client.get(
+            f"{BASE_URL}?price={str(test_price)}&rating={str(test_rating)}"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), len(target_products))
 
         target_products = [
-            product for product in products
+            product
+            for product in products
             if product.price <= test_price and product.available is True
         ]
         response = self.client.get(f"{BASE_URL}?price={str(test_price)}&available=True")
@@ -614,7 +616,7 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_category_bad_type(self):
-        '''It should return 406 for bad category in update category'''
+        """It should return 406 for bad category in update category"""
         # create a product to update
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
@@ -631,6 +633,6 @@ class TestYourResourceServer(TestCase):
         new_product["category"] = 1
         response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
-        new_product["category"] = "a"*(MAX_CATEGORY_LENGTH+1)
+        new_product["category"] = "a" * (MAX_CATEGORY_LENGTH + 1)
         response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)

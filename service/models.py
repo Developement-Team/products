@@ -80,9 +80,13 @@ class Product(db.Model):
             if "UniqueViolation" in error.args[0]:
                 raise DataValidationError(f"Error: name {self.name} already exists!")
             elif "NotNullViolation" in error.args[0]:
-                raise DataValidationError(f"Error: Some none-null vaiable not provided. {error.args[0]}")
+                raise DataValidationError(
+                    f"Error: Some none-null vaiable not provided. {error.args[0]}"
+                )
             else:
-                raise DataValidationError("Error: Something happened when creating new product.")
+                raise DataValidationError(
+                    "Error: Something happened when creating new product."
+                )
 
     def update(self):
         """
@@ -155,13 +159,11 @@ class Product(db.Model):
                 self.no_of_users_rated = no_of_users_rated
             else:
                 raise DataValidationError(
-                    "Invalid Range for [no_of_users_rated]: "
-                    + str(no_of_users_rated)
+                    "Invalid Range for [no_of_users_rated]: " + str(no_of_users_rated)
                 )
         else:
             raise DataValidationError(
-                "Invalid Type for [no_of_users_rated]: "
-                + str(type(no_of_users_rated))
+                "Invalid Type for [no_of_users_rated]: " + str(type(no_of_users_rated))
             )
 
     def check_name(self, name):
