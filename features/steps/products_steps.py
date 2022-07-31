@@ -3,27 +3,31 @@
 
 import os
 import requests
-from behave import given, when, then
+from behave import given
+from compare import expect
 
-
-@given("the server is started")
+@given('the following products')
 def step_impl(context):
-    context.base_url = os.getenv("BASE_URL", "http://localhost:8080")
-    context.resp = requests.get(context.base_url + "/")
-    assert context.resp.status_code == 200
-
-
-@when('I visit the "home page"')
-def step_impl(context):
-    context.resp = requests.get(context.base_url + "/")
-    assert context.resp.status_code == 200
-
-
-@then('I should see "{message}"')
-def step_impl(context, message):
-    assert message not in str(context.resp.text)
-
-
-@then('I should not see "{message}"')
-def step_impl(context, message):
-    assert message not in str(context.resp.text)
+    """ Load the database with new pets """
+    # List all of the products and delete them one by one
+    rest_endpoint = f"{context.BASE_URL}/products"
+    context.resp = requests.get(rest_endpoint)
+    expect(context.resp.status_code).to_equal(200)
+    for product in context.resp.json():
+        context.resp = requests.delete(f"{rest_endpoint}/{product['id']}")
+        expect(context.resp.status_code).to_equal(204)
+    for row in context.table:
+        payload = {
+        "name": row['name'],
+        "description": row["description"],
+        "category": row['category'],
+        "price": float(row['price']),
+        "available": row['available'] in ['True', 'true', '1'],
+        "rating": row["rating"],
+        "no_of_users_rated": row["no_of_users_rated"]
+        }
+        context.resp = requests.post(
+        rest_endpoint,
+        json=payload
+        )
+        expect(context.resp.status_code).to_equal(201)
