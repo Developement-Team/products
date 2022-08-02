@@ -354,6 +354,19 @@ class TestYourResourceServer(TestCase):
         updated_product = response.get_json()
         self.assertEqual(updated_product["category"], "THIS IS TEST CATEGORY")
 
+    def test_query_by_name(self):
+        """It should Query Products by Name"""
+        products = self._create_products(10)
+        test_name = products[0].name
+        name_products = [
+            product for product in products if product.name == test_name
+        ]
+        response = self.client.get(BASE_URL, query_string=f"name={str(test_name)}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        fetched_data = response.get_json()
+        self.assertEqual(len(fetched_data), len(name_products))
+        self.assertEqual(fetched_data[0]["name"], test_name)
+
     ######################################################################
     #  T E S T   S A D   P A T H S
     ######################################################################

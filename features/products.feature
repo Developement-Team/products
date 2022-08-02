@@ -24,3 +24,18 @@ Scenario: List all products
     And I should see "Shirt" in the results
     And I should see "Jeans" in the results
     And I should see "SportsWear" in the results
+
+Scenario: Delete a Product
+    When I visit the "home page"
+    And I set the "Name" to "Shirt"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Shirt" in the "Name" field
+    When I press the "Delete" button
+    And I press the "Clear" button
+    And I press the "search" button
+    Then I should see the message "Success"
+    And I should see "t_shirt" in the results
+    And I should see "Jeans" in the results
+    And I should see "SportsWear" in the results
+    

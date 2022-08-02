@@ -60,12 +60,26 @@ def check_rating(rating_str):
     return results
 
 
+def check_name(name_str):
+    products = Product.find_by_name(name_str)
+    results = [product.serialize() for product in products]
+    return results
+
+
 def eliminate_product(products_all, products):
     result = []
     for product in products_all:
         if product in products:
             result.append(product)
     return result
+
+
+def check_availability(available):
+    if available != "True":
+        raise ValueError
+    products = Product.find_by_availability()
+    results = [product.serialize() for product in products]
+    return results
 
 
 @app.route("/products", methods=["GET"])
@@ -77,28 +91,26 @@ def list_products():
     category = request.args.get("category")
     price = request.args.get("price")
     available = request.args.get("available")
-    if category:
-        results = check_category(category)
-        results_all = eliminate_product(results_all, results)
-    if price:
-        try:
+    name_str = request.args.get("name")
+    try:
+        if name_str:
+            results = check_name(name_str)
+            app.logger.info("Request for products with name : %s ", name_str)
+            results_all = eliminate_product(results_all, results)
+        if category:
+            results = check_category(category)
+            results_all = eliminate_product(results_all, results)
+        if price:
             results = check_price(price)
             results_all = eliminate_product(results_all, results)
-        except ValueError:
-            return "", status.HTTP_406_NOT_ACCEPTABLE
-    if rating_str:
-        try:
+        if rating_str:
             results = check_rating(rating_str)
             results_all = eliminate_product(results_all, results)
-        except ValueError:
-            return "", status.HTTP_406_NOT_ACCEPTABLE
-    if available:
-        if available != "True":
-            return "", status.HTTP_406_NOT_ACCEPTABLE
-        products = Product.find_by_availability()
-        results = [product.serialize() for product in products]
-        results_all = eliminate_product(results_all, results)
-
+        if available:
+            results = check_availability(available)
+            results_all = eliminate_product(results_all, results)
+    except ValueError:
+        return "", status.HTTP_406_NOT_ACCEPTABLE
     app.logger.info("Returning %d products", len(results_all))
     return jsonify(results_all), status.HTTP_200_OK
 
