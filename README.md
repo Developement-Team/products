@@ -80,15 +80,15 @@ http DELETE localhost:8000/products/<int:product_id>
 | Endpoint                                  | Method    | Description |
 |-------------------------------------------|-----------|-------------|
 |`/products   `                               | **POST**      | Creates a new Product |
-|`/products/\<int:product_id>    `             | **DELETE**    | Deletes a product with the given product_id
+|`/products/<int:product_id>    `             | **DELETE**    | Deletes a product with the given product_id
 |`/ `                                         | **GET**       | Gets the details of all available API's
 |`/products `                                 | **GET**       | Gets the details of all the products
-|`/products/\<int:product_id>/category     `   | **PUT**       | Updates the category of the product.
-|`/products/\<int:product_id>/description `    | **PUT**       | Updates the description of a product
-|`/products/\<int:product_id>/price   `        | **PUT**       | Updates the price of a product.
-|`/products/\<int:product_id>        `         | **PUT**       | Updates multiple fields of a product
-|`/products/\<int:product_id>/rating`          | **PUT**       | Updates the rating of a product.
-|`/products/\<int:product_id>    `             | **GET**       | Get the details of a particular product.
+|`/products/<int:product_id>/category     `   | **PUT**       | Updates the category of the product.
+|`/products/<int:product_id>/description `    | **PUT**       | Updates the description of a product
+|`/products/<int:product_id>/price   `        | **PUT**       | Updates the price of a product.
+|`/products/<int:product_id>        `         | **PUT**       | Updates multiple fields of a product
+|`/products/<int:product_id>/rating`          | **PUT**       | Updates the rating of a product.
+|`/products/<int:product_id>    `             | **GET**       | Get the details of a particular product.
 
 ## What's featured in the project? 
 * app/routes.py -- the main Service routes using Python Flask
