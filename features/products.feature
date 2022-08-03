@@ -112,3 +112,58 @@ Scenario: Create a product
     And I should see "8" in the "Price" field
     And I should see "3" in the "Rating" field
     And I should see "4" in the "Num Rating" field
+
+Scenario: Update a Product name
+    When I visit the "Home Page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Women's Clothing" in the "Category" field
+    When I change "Name" to "JeanA"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "JeanA" in the "Name" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "JeanA" in the results
+
+Scenario: Update a Product price
+    When I visit the "Home Page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Women's Clothing" in the "Category" field
+    When I change "Price" to "50"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "50" in the "Price" field
+
+Scenario: Update a Product availability
+    When I visit the "Home Page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Women's Clothing" in the "Category" field
+    When I select "False" in the "Available" dropdown
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "False" in the "Available" dropdown

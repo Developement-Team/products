@@ -90,6 +90,55 @@ $(function () {
     // ****************************************
 
     $("#update-btn").click(function () {
+        let product_id = $("#product_id").val();
+        let name = $("#product_name").val();
+        let category = $("#product_category").val();
+        let description = $("#product_description").val();
+        let available = $("#product_available").val();
+        let price = $("#product_price").val();
+        let rating = $("#product_rating").val();
+        let num_rating = $("#product_num_rating").val();
+        
+        let data = {}
+        if (name) {
+            data["name"] = name;
+        }
+        if (category) {
+            data["category"] = category;
+        }
+        if (description) {
+            data["description"] = description;
+        }
+        if (available != "UNKNOWN") {
+            data["available"] = Boolean(available == "true");
+        }
+        if (price) {
+            data["price"] = parseFloat(price);
+        }
+        if (rating) {
+            data["rating"] = parseFloat(rating);
+        }
+        if (num_rating) {
+            data["no_of_users_rated"] = parseInt(num_rating);
+        }
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+                type: "PUT",
+                url: `/products/${product_id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
 
     });
 
