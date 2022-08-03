@@ -118,9 +118,8 @@ $(function () {
     $("#search-btn").click(function () {
         let name = $("#product_name").val();
         let category = $("#product_category").val();
-        let available = $("#product_available").val() == "true";
+        let available = $("#product_available").val()=="True";
         let rating = $("#product_rating").val();
-
         let queryString = ""
 
         if (name) {
@@ -135,9 +134,16 @@ $(function () {
         }
         if (available) {
             if (queryString.length > 0) {
-                queryString += '&available=' + available
+                queryString += '&available=' + "True"
             } else {
-                queryString += 'available=' + available
+                queryString += 'available=' + "True"
+            }
+        }
+        if (rating){
+            if (queryString.length > 0){
+                queryString += '&rating=' + rating
+            }else{
+                queryString += 'rating=' + rating
             }
         }
 
