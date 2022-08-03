@@ -92,9 +92,9 @@ Scenario: Add a rating
     Then I should see the message "Success"
     # And I should see "3" in the "Number of ratings" field 
     When I copy the "Id" field
-    When I paste the "Id" field
-    And I set the "Rating" to "2"
-    And I press the "Submit" button
+    When I set the "Id" field
+    And I add the "Rating" to "2"
+    And I press the "Add-Rating" button
     Then I should see the message "Rating added"
     # When I paste the "Id" field 
     # And I press the "Retrieve" button

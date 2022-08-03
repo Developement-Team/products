@@ -198,8 +198,8 @@ $(function () {
     // ****************************************
 
     $("#add-rating-btn").click(function () {
-        let product_id = $("#product_id").val();
-        let product_rating = $("#product_rating").val();
+        let product_id = $("#add_product_id").val();
+        let product_rating = $("#add_product_rating").val();
         $("#flash_message").empty();
         
         let ajax = $.ajax({
@@ -209,7 +209,7 @@ $(function () {
         })
         ajax.done(function(res){
             update_form_data(res)
-            flash_message("Success")
+            flash_message("Rating added")
         });
 
         ajax.fail(function(res){
