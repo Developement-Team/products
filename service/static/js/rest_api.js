@@ -198,7 +198,22 @@ $(function () {
     // ****************************************
 
     $("#add-rating-btn").click(function () {
+        let product_id = $("#product_id").val();
+        let product_rating = $("#product_rating").val();
+        $("#flash_message").empty();
+        
+        let ajax = $.ajax({
+            type : "PUT",
+            url : `/products/${product_id}/${product_rating}`,
+            contentType: "application/json"
+        })
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
 
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
     });
-
 })
