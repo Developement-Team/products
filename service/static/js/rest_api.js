@@ -6,6 +6,11 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
+        if(res.available){
+            res.available = "True"
+        }else{
+            res.available = "False"
+        }
         $("#product_id").val(res.id);
         $("#product_name").val(res.name);
         $("#product_category").val(res.category);
@@ -38,7 +43,45 @@ $(function () {
     // ****************************************
 
     $("#create-btn").click(function () {
+        let name = $("#product_name").val();
+        let category = $("#product_category").val();
+        let description = $("#product_description").val();
+        let available = $("#product_available").val() == "True";
+        let price = $("#product_price").val();
+        let rating = $("#product_rating").val();
+        let num_rating = $("#product_num_rating").val();
+        if(available){
+            available = "True"
+        }else{
+            available = "False"
+        }
+        let data = {
+            "name": name,
+            "category": category,
+            "description": description,
+            "available": Boolean(available),
+            "price": parseFloat(price),
+            "rating": parseFloat(rating),
+            "no_of_users_rated": parseInt(num_rating)
+        };
 
+        $("#flash_message").empty();
+        
+        let ajax = $.ajax({
+            type: "POST",
+            url: "/products",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+        });
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
     });
 
 
