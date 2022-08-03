@@ -6,10 +6,10 @@ Feature: The product management service back-end
 Background:
     Given the following products
         | name       | description              | category          | price     | available  | rating   | no_of_users_rated |
-        | t_shirt    | Blue T-Shirt             | Men's Clothing    | 95.26     | true       | 4.62     | 5                 |
-        | Shirt      | Black Shirt              | Men's Clothing    | 26.25     | false      | 3.57     | 3                 |
-        | Jeans      | Denim Jeans              | Women's Clothing  | 25.45     | true       | 4.9      | 7                 |
-        | SportsWear | White Tees for Sports    | Women's Clothing  | 56.26     | true       | 4.62     | 5                 |
+        | t_shirt    | Blue T-Shirt             | Men's Clothing    | 95.26     | True       | 4.62     | 5                 |
+        | Shirt      | Black Shirt              | Men's Clothing    | 26.25     | False      | 3.57     | 3                 |
+        | Jeans      | Denim Jeans              | Women's Clothing  | 25.45     | True       | 4.9      | 7                 |
+        | SportsWear | White Tees for Sports    | Women's Clothing  | 56.26     | True       | 4.62     | 5                 |
 
 Scenario: The server is running
     When I visit the "home page"
@@ -38,4 +38,21 @@ Scenario: Delete a Product
     And I should see "t_shirt" in the results
     And I should see "Jeans" in the results
     And I should see "SportsWear" in the results
+
+Scenario: Retrieve a Product
+    When I visit the "home page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    When I copy the "Id" field
+    And I press the "Clear" button
+    Then the "Id" field should be empty
+    And the "Name" field should be empty
+    When I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Denim Jeans" in the "Description" field
+    And I should see "Women's Clothing" in the "Category" field
     
