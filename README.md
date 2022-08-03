@@ -61,7 +61,8 @@ Create a product:
 ```bash
 http POST localhost:8000/products name="" description="" category="" price:=<float> available:=<bool> rating:=<int>
 ```
-You must specifiy the ``name``, ``description``, ``category``, ``price`` and ``rating``of the product. 
+You must specifiy the ``name``, ``description``, ``category``, ``price`` and ``availability``of the product.   
+The following fields are optional : ``rating``, ``Number of People who rated the product``  
 - Acceptable price is within range: ``10.0-100.0``
 - Acceptable rating is between ``0-5``
 
@@ -77,6 +78,23 @@ Delete a product:
 ```bash
 http DELETE localhost:8000/products/<int:product_id>
 ```
+
+| Endpoint                                  | Method    | Description |
+|-------------------------------------------|-----------|-------------|
+|`/products   `                               | **POST**      | Creates a new Product |
+|`/products/<int:product_id>    `             | **DELETE**    | Deletes a product with the given product_id |
+|`/ `                                         | **GET**       | Gets the details of all available API's |
+|`/products `                                 | **GET**       | Gets the details of all the products |
+|`/products/<int:product_id>    `             | **GET**       | Get the details of a particular product |
+`/products/<int:product_id>        `         | **PUT**       | Updates multiple fields of a product |
+|`/products/<int:product_id>/category     `   | **PUT**       | Updates the category of the product |
+|`/products/<int:product_id>/description `    | **PUT**       | Updates the description of a product |
+|`/products/<int:product_id>/price   `        | **PUT**       | Updates the price of a product |
+|`/products/<int:product_id>/rating`          | **PUT**       | Updates the rating of a product |
+
+The method : `GET /products` supports Query Strings with multiple constraints.  
+For example : `GET /products?rating=3&price=50` will return the list of all products with `Rating >= 3` and `Price <= 50`.  
+
 
 ## What's featured in the project? 
 * app/routes.py -- the main Service routes using Python Flask
