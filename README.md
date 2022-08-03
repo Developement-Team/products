@@ -4,6 +4,7 @@
 [![Build Status](https://github.com/Products-Development-Team/products/actions/workflows/tdd.yml/badge.svg)](https://github.com/Products-Development-Team/products/actions)
 [![Build Status](https://github.com/Products-Development-Team/products/actions/workflows/bdd.yml/badge.svg)](https://github.com/Products-Development-Team/products/actions)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
+[![codecov](https://codecov.io/gh/Products-Development-Team/products/branch/master/graph/badge.svg?token=PZG0GGW7VJ)](https://codecov.io/gh/Products-Development-Team/products)
 
 This is an NYU DevOps project that creates a RESTful microservice using Python Flask and PostgreSQL. 
 
