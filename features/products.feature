@@ -57,7 +57,7 @@ Scenario: Retrieve a Product
     And I should see "Women's Clothing" in the "Category" field
 
 Scenario: Search for Men's Clothing
-    When I visit the "Home Page"
+    When I visit the "home Page"
     And I set the "Category" to "Men's Clothing"
     And I press the "Search" button
     Then I should see the message "Success"
@@ -67,7 +67,7 @@ Scenario: Search for Men's Clothing
     And I should not see "SportsWear" in the results
 
 Scenario: Search for available
-    When I visit the "Home Page"
+    When I visit the "home Page"
     And I select "True" in the "Available" dropdown
     And I press the "Search" button
     Then I should see the message "Success"
@@ -77,7 +77,7 @@ Scenario: Search for available
     And I should not see "Shirt-B" in the results
 
 Scenario: Search for Women's Clothing with Rating > 4 and Price < 30
-    When I visit the "Home Page"
+    When I visit the "home Page"
     And I set the "Category" to "Women's Clothing"
     And I set the "Price" to "30"
     And I set the "Rating" to "4"
@@ -85,6 +85,20 @@ Scenario: Search for Women's Clothing with Rating > 4 and Price < 30
     Then I should see the message "Success"
     And I should see "Jeans" in the results
 
+Scenario: Add a rating
+    When I visit the "home Page"
+    And I set the "Name" to "Shirt-B"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    # And I should see "3" in the "Number of ratings" field 
+    When I copy the "Id" field
+    When I set the "Id" field
+    And I add the "Rating" to "2"
+    And I press the "Add-Rating" button
+    Then I should see the message "Rating added"
+    # When I paste the "Id" field 
+    # And I press the "Retrieve" button
+    # Then I should see "4" in the "Number of ratings" field
 Scenario: Create a product
     When I visit the "Home Page"
     And I set the "Name" to "jacket"

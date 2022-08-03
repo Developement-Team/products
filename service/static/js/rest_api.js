@@ -290,7 +290,24 @@ $(function () {
     // ****************************************
 
     $("#add-rating-btn").click(function () {
+        let product_id = $("#add_product_id").val();
+        let rating = $("#add_product_rating").val(); 
+        $("#flash_message").empty();
+        let data = {"rating": parseInt(rating)}
 
+        let ajax = $.ajax({
+            type : "PUT",
+            url : `/products/${product_id}/rating`,
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        })
+        ajax.done(function(res){
+            update_form_data(res);
+            flash_message("Rating added");
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message);
+        });
     });
-
 })
