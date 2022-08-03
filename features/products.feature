@@ -85,6 +85,7 @@ Scenario: Search for Women's Clothing with Rating > 4 and Price < 30
     Then I should see the message "Success"
     And I should see "Jeans" in the results
 
+<<<<<<< HEAD
 Scenario: Add a rating
     When I visit the "home Page"
     And I set the "Name" to "Shirt-B"
@@ -99,3 +100,87 @@ Scenario: Add a rating
     # When I paste the "Id" field 
     # And I press the "Retrieve" button
     # Then I should see "4" in the "Number of ratings" field
+=======
+Scenario: Create a product
+    When I visit the "Home Page"
+    And I set the "Name" to "jacket"
+    And I set the "Category" to "Men's clothing"
+    And I set the "Description" to "black winter jacket"
+    And I select "True" in the "Available" dropdown
+    And I set the "Price" to "18"
+    And I set the "Rating" to "3"
+    And I set the "num rating" to "4"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    Then the "Id" field should be empty
+    And the "Name" field should be empty
+    And the "Category" field should be empty
+    And the "Description" field should be empty
+    When I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "jacket" in the "Name" field
+    And I should see "Men's clothing" in the "Category" field
+    And I should see "black winter jacket" in the "Description" field
+    And I should see "True" in the "Available" dropdown
+    And I should see "8" in the "Price" field
+    And I should see "3" in the "Rating" field
+    And I should see "4" in the "Num Rating" field
+
+Scenario: Update a Product name
+    When I visit the "Home Page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Women's Clothing" in the "Category" field
+    When I change "Name" to "JeanA"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "JeanA" in the "Name" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "JeanA" in the results
+
+Scenario: Update a Product price
+    When I visit the "Home Page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Women's Clothing" in the "Category" field
+    When I change "Price" to "50"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "50" in the "Price" field
+
+Scenario: Update a Product availability
+    When I visit the "Home Page"
+    And I set the "Name" to "Jeans"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Jeans" in the "Name" field
+    And I should see "Women's Clothing" in the "Category" field
+    When I select "False" in the "Available" dropdown
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "False" in the "Available" dropdown
+>>>>>>> c1c852497cb666813dac873b446d7cf864aab769
