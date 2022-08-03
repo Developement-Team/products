@@ -60,8 +60,8 @@ Create a product:
 ```bash
 http POST localhost:8000/products name="" description="" category="" price:=<float> available:=<bool> rating:=<int>
 ```
-You must specifiy the ``name``, ``description``, ``category``, ``price`` and ``availability``of the product. 
-The following fields are optional : ``rating``, ``Number of People who rated the product``
+You must specifiy the ``name``, ``description``, ``category``, ``price`` and ``availability``of the product.   
+The following fields are optional : ``rating``, ``Number of People who rated the product``  
 - Acceptable price is within range: ``10.0-100.0``
 - Acceptable rating is between ``0-5``
 
