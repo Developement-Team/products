@@ -91,8 +91,8 @@ http DELETE localhost:8000/products/<int:product_id>
 |`/products/<int:product_id>/price   `        | **PUT**       | Updates the price of a product |
 |`/products/<int:product_id>/rating`          | **PUT**       | Updates the rating of a product |
 
-The method : `GET /products` supports Query Strings with multiple constraints.
-For example : `GET /products?rating=3&price=50` will return the list of all products with `Rating >= 3` and `Price <= 50`.
+The method : `GET /products` supports Query Strings with multiple constraints.  
+For example : `GET /products?rating=3&price=50` will return the list of all products with `Rating >= 3` and `Price <= 50`.  
 
 
 ## What's featured in the project? 
