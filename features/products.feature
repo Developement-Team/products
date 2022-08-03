@@ -85,7 +85,6 @@ Scenario: Search for Women's Clothing with Rating > 4 and Price < 30
     Then I should see the message "Success"
     And I should see "Jeans" in the results
 
-<<<<<<< HEAD
 Scenario: Add a rating
     When I visit the "home Page"
     And I set the "Name" to "Shirt-B"
@@ -100,7 +99,6 @@ Scenario: Add a rating
     # When I paste the "Id" field 
     # And I press the "Retrieve" button
     # Then I should see "4" in the "Number of ratings" field
-=======
 Scenario: Create a product
     When I visit the "Home Page"
     And I set the "Name" to "jacket"
@@ -183,4 +181,3 @@ Scenario: Update a Product availability
     And I press the "Retrieve" button
     Then I should see the message "Success"
     And I should see "False" in the "Available" dropdown
->>>>>>> c1c852497cb666813dac873b446d7cf864aab769
