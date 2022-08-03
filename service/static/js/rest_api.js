@@ -37,9 +37,37 @@ $(function () {
     // Create a Product
     // ****************************************
 
-    $("#create-btn").click(function () {
+        $("#create-btn").click(function () {
+        let name = $("#product_name").val();
+        let category = $("#product_category").val();
+        let description = $("#product_description").val();
+        let available = Boolean($("#product_available").val() == "true");
+        let price = $("#product_price").val();
+        let rating = $("#product_rating").val();
+        let num_rating = $("#product_num_rating").val();
 
-    });
+        let data = {
+            "name": name,
+            "category": category,
+            "description": description,
+            "available": available,
+            "price": parseFloat(price),
+            "rating": parseFloat(rating),
+            "no_of_users_rated": parseInt(num_rating)
+        };
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "POST",
+            url: "/products",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+        });
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
 
 
     // ****************************************
