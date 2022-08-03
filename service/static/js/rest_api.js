@@ -291,13 +291,14 @@ $(function () {
 
     $("#add-rating-btn").click(function () {
         let product_id = $("#add_product_id").val();
-        let product_rating = $("#add_product_rating").val();
+        let rating = $("#add_product_id").val(); 
         $("#flash_message").empty();
         
         let ajax = $.ajax({
             type : "PUT",
-            url : `/products/${product_id}/${product_rating}`,
-            contentType: "application/json"
+            url : `/products/${product_id}/rating`,
+            contentType: "application/json",
+            data: JSON.stringify(rating)
         })
         ajax.done(function(res){
             update_form_data(res)
