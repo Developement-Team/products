@@ -9,11 +9,12 @@ Describe what your service does here
 # import logging
 # from flask import Flask, request, url_for, jsonify, make_response, abort
 from flask import url_for, jsonify, request, abort
+from flask_restx import Api, Resource, fields, reqparse, inputs
 from service.utils import status  # HTTP Status Codes
 from service.models import Product, MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
 
 # Import Flask application
-from . import app
+from . import app, api
 
 MAX_CATEGORY_LENGTH = 63
 ######################################################################
@@ -27,6 +28,28 @@ def index():
     app.logger.info("Request for Root URL")
     return app.send_static_file("index.html")
 
+# Define the model so that the docs reflect what can be sent
+create_model = api.model('Product', {
+    'name': fields.String(required=True,
+                          description='The name of the product'),
+    'category': fields.String(required=True,
+                              description='The category of product (e.g., men\'s clothing, women\'s clothing etc.)'),
+    'available': fields.Boolean(required=True,
+                                description='Is the product available for purchase?'),
+    'description': fields.String(description='The description of the product'),
+    'price': fields.Float(required=True, description='The price of the product'),
+    'rating': fields.Float(description='The cumulative rating of the product'),
+    'number of ratings': fields.Integer(description='The number of ratings given to to the product')
+})
+
+product_model = api.inherit(
+    'productModel', 
+    create_model,
+    {
+        '_id': fields.String(readOnly=True,
+                            description='The unique id assigned internally by service'),
+    }
+)
 
 ######################################################################
 # LIST ALL PRODUCTS
