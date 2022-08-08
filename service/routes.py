@@ -9,7 +9,7 @@ Describe what your service does here
 # import logging
 # from flask import Flask, request, url_for, jsonify, make_response, abort
 from flask import url_for, jsonify, request, abort
-from flask_restx import Api, Resource, fields, reqparse, inputs
+from flask_restx import Resource, fields  # Api, reqparse, inputs
 from service.utils import status  # HTTP Status Codes
 from service.models import Product, MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
 
@@ -20,6 +20,8 @@ MAX_CATEGORY_LENGTH = 63
 ######################################################################
 # GET INDEX
 ######################################################################
+
+
 @app.route("/")
 def index():
     """Root URL response"""
@@ -28,33 +30,42 @@ def index():
 
 
 # Define the model so that the docs reflect what can be sent
-create_model = api.model('Product', {
-    'name': fields.String(required=True,
-                          description='The name of the product'),
-    'category': fields.String(required=True,
-                              description='The category of product (e.g., men\'s clothing, women\'s clothing etc.)'),
-    'available': fields.Boolean(required=True,
-                                description='Is the product available for purchase?'),
-    'description': fields.String(description='The description of the product'),
-    'price': fields.Float(required=True, description='The price of the product'),
-    'rating': fields.Float(description='The cumulative rating of the product'),
-    'number of ratings': fields.Integer(description='The number of ratings given to to the product')
-})
+create_model = api.model(
+    "Product",
+    {
+        "name": fields.String(required=True, description="The name of the product"),
+        "category": fields.String(
+            required=True,
+            description="The category of product (e.g., men's clothing, women's clothing etc.)",
+        ),
+        "available": fields.Boolean(
+            required=True, description="Is the product available for purchase?"
+        ),
+        "description": fields.String(description="The description of the product"),
+        "price": fields.Float(required=True, description="The price of the product"),
+        "rating": fields.Float(description="The cumulative rating of the product"),
+        "number of ratings": fields.Integer(
+            description="The number of ratings given to to the product"
+        ),
+    },
+)
 
 product_model = api.inherit(
-    'ProductModel',
+    "ProductModel",
     create_model,
     {
-        'id': fields.String(readOnly=True,
-                            description='The unique id assigned internally by service'),
-    }
+        "id": fields.String(
+            readOnly=True, description="The unique id assigned internally by service"
+        ),
+    },
 )
+
 
 ######################################################################
 #  PATH: /products/{id}
 ######################################################################
-@api.route('/products/<product_id>')
-@api.param('product_id', 'The Product identifier')
+@api.route("/products/<product_id>")
+@api.param("product_id", "The Product identifier")
 class ProductResource(Resource):
     """
     ProductResource class
@@ -64,12 +75,15 @@ class ProductResource(Resource):
     PUT /product{id} - Update a Product with the id
     DELETE /product{id} -  Deletes a Product with the id
     """
-    #------------------------------------------------------------------
-    # RETRIEVE A PRODUCT
-    #------------------------------------------------------------------
 
-    @app.route("/products/<int:product_id>", methods=["GET"])
-    def get_products(product_id):
+    # ------------------------------------------------------------------
+    # RETRIEVE A PRODUCT
+    # ------------------------------------------------------------------
+    @api.doc("get_products")
+    @api.response(404, "Product not found")
+    @api.marshal_with(product_model)
+    # @app.route("/products/<int:product_id>", methods=["GET"])
+    def get(product_id):
         """
         Retrieve a single Product
 
@@ -79,15 +93,16 @@ class ProductResource(Resource):
         product = Product.find(product_id)
         if not product:
             abort(
-                status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found."
+                status.HTTP_404_NOT_FOUND,
+                f"Product with id '{product_id}' was not found.",
             )
 
         app.logger.info("Returning product: %s", product.name)
-        return jsonify(product.serialize()), status.HTTP_200_OK
+        return product.serialize(), status.HTTP_200_OK
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # UPDATE AN EXISTING PRODUCT
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @app.route("/products/<int:product_id>", methods=["PUT"])
     def update_products(product_id):
         """
@@ -101,7 +116,8 @@ class ProductResource(Resource):
         product = Product.find(product_id)
         if not product:
             abort(
-                status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found."
+                status.HTTP_404_NOT_FOUND,
+                f"Product with id '{product_id}' was not found.",
             )
 
         product.deserialize(request.get_json())
@@ -111,9 +127,9 @@ class ProductResource(Resource):
         app.logger.info("Product with ID [%s] updated.", product.id)
         return jsonify(product.serialize()), status.HTTP_200_OK
 
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # DELETE A PRODUCT
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @app.route("/products/<int:product_id>", methods=["DELETE"])
     def delete_products(product_id):
         """Delete a Product"""
@@ -129,9 +145,10 @@ class ProductResource(Resource):
 ######################################################################
 #  PATH: /products
 ######################################################################
-@api.route('/products', strict_slashes=False)
+@api.route("/products", strict_slashes=False)
 class ProductCollection(Resource):
-    """ Handles all interactions with collections of Products """
+    """Handles all interactions with collections of Products"""
+
     # ------------------------------------------------------------------
     # LIST ALL PRODUCTS
     # ------------------------------------------------------------------
@@ -224,6 +241,7 @@ def list_products():
     # ADD A NEW PRODUCT
     # ------------------------------------------------------------------
 
+
 @app.route("/products", methods=["POST"])
 def create_products():
     """
@@ -233,27 +251,32 @@ def create_products():
     app.logger.info("Request to create a product")
     check_content_type("application/json")
     data = request.get_json()
-    data["rating"] = None if "rating" not in data or data["rating"] is None \
+    data["rating"] = (
+        None
+        if "rating" not in data or data["rating"] is None
         else float(data["rating"])
-    data["no_of_users_rated"] = 0 if "no_of_users_rated" not in data \
-        or data["no_of_users_rated"] is None else int(data["no_of_users_rated"])
+    )
+    data["no_of_users_rated"] = (
+        0
+        if "no_of_users_rated" not in data or data["no_of_users_rated"] is None
+        else int(data["no_of_users_rated"])
+    )
     product = Product()
     product.deserialize(data)
     app.logger.info("Here Deserialization done")
     product.create()
     message = product.serialize()
-    location_url = url_for(
-        "get_products", product_id=product.id, _external=True)
+    location_url = url_for("get_products", product_id=product.id, _external=True)
 
     app.logger.info("Product with ID [%s] created.", product.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
-######################################################################
-#  PATH: /products/{id}/rating
-######################################################################
-    #------------------------------------------------------------------
+    ######################################################################
+    #  PATH: /products/{id}/rating
+    ######################################################################
+    # ------------------------------------------------------------------
     # UPDATE THE RATING OF A PRODUCT
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @app.route("/products/<int:product_id>/rating", methods=["PUT"])
     def update_rating_of_product(product_id):
         """
@@ -280,7 +303,8 @@ def create_products():
             )
         if new_rating["rating"] <= 0 or new_rating["rating"] > 5:
             abort(
-                status.HTTP_406_NOT_ACCEPTABLE, description="The ratings can be from [1,5]"
+                status.HTTP_406_NOT_ACCEPTABLE,
+                description="The ratings can be from [1,5]",
             )
         if new_rating["rating"] is not None:
             product.id = product_id
@@ -292,21 +316,19 @@ def create_products():
                 product.rating = float(new_rating["rating"])
             else:
                 product.rating = float(
-                    product.rating * product.no_of_users_rated +
-                    new_rating["rating"]
+                    product.rating * product.no_of_users_rated + new_rating["rating"]
                 ) / (product.no_of_users_rated + 1)
                 product.no_of_users_rated = product.no_of_users_rated + 1
             product.update()
             app.logger.info("Product with ID [%s] updated.", product.id)
         return jsonify(product.serialize()), status.HTTP_200_OK
 
-
-######################################################################
-#  PATH: /pets/{id}/price
-######################################################################
-    #------------------------------------------------------------------
+    ######################################################################
+    #  PATH: /pets/{id}/price
+    ######################################################################
+    # ------------------------------------------------------------------
     # UPDATE THE PRICE OF A PRODUCT
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @app.route("/products/<int:product_id>/price", methods=["PUT"])
     def update_price_of_product(product_id):
         """
@@ -340,20 +362,18 @@ def create_products():
             )
         new_price["price"] = float(new_price["price"])
         if new_price["price"] < MIN_PRICE or new_price["price"] > MAX_PRICE:
-            abort(status.HTTP_406_NOT_ACCEPTABLE,
-                description="New price out of range.")
+            abort(status.HTTP_406_NOT_ACCEPTABLE, description="New price out of range.")
         product.price = new_price["price"]
         product.update()
         app.logger.info("Price of product with ID [%s] updated.", product.id)
         return jsonify(product.serialize()), status.HTTP_200_OK
 
-
-######################################################################
-#  PATH: /products/{id}/description
-######################################################################
-    #------------------------------------------------------------------
+    ######################################################################
+    #  PATH: /products/{id}/description
+    ######################################################################
+    # ------------------------------------------------------------------
     # UPDATE THE DESCRIPTION OF A PRODUCT
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @app.route("/products/<int:product_id>/description", methods=["PUT"])
     def update_description_of_product(product_id):
         """
@@ -373,7 +393,10 @@ def create_products():
                 description=f"Product with id '{product_id}' was not found.",
             )
         new_description = request.get_json()
-        if "description" not in new_description or new_description["description"] is None:
+        if (
+            "description" not in new_description
+            or new_description["description"] is None
+        ):
             abort(
                 status.HTTP_406_NOT_ACCEPTABLE,
                 description="Description should be in dict name 'description'.",
@@ -385,19 +408,20 @@ def create_products():
             )
         if len(new_description["description"]) > MAX_DESCRIPTION_LENGTH:
             abort(
-                status.HTTP_406_NOT_ACCEPTABLE, description="Description length over limit."
+                status.HTTP_406_NOT_ACCEPTABLE,
+                description="Description length over limit.",
             )
         product.description = new_description["description"]
         product.update()
         app.logger.info("Description of product with ID [%s] updated.", product.id)
         return jsonify(product.serialize()), status.HTTP_200_OK
 
-######################################################################
-#  PATH: /products/{id}/category
-######################################################################
-    #------------------------------------------------------------------
+    ######################################################################
+    #  PATH: /products/{id}/category
+    ######################################################################
+    # ------------------------------------------------------------------
     # UPDATE THE CATEGORY OF A PRODUCT
-    #------------------------------------------------------------------
+    # ------------------------------------------------------------------
     @app.route("/products/<int:product_id>/category", methods=["PUT"])
     def update_category_of_product(product_id):
         """
@@ -428,8 +452,10 @@ def create_products():
                 description="Category should be of str datatype",
             )
         if len(new_category["category"]) > MAX_CATEGORY_LENGTH:
-            abort(status.HTTP_406_NOT_ACCEPTABLE,
-                description="Category length over limit.")
+            abort(
+                status.HTTP_406_NOT_ACCEPTABLE,
+                description="Category length over limit.",
+            )
         product.category = new_category["category"]
         product.update()
         app.logger.info("Description of product with ID [%s] updated.", product.id)
@@ -439,6 +465,7 @@ def create_products():
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
+
 
 def init_db():
     """Initializes the SQLAlchemy app"""
