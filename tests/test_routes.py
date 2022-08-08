@@ -23,7 +23,7 @@ from urllib.parse import quote_plus
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/products"
+BASE_URL = "/api/products"
 CONTENT_TYPE_JSON = "application/json"
 
 MAX_CATEGORY_LENGTH = 63
