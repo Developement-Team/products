@@ -358,9 +358,7 @@ class TestYourResourceServer(TestCase):
         """It should Query Products by Name"""
         products = self._create_products(10)
         test_name = products[0].name
-        name_products = [
-            product for product in products if product.name == test_name
-        ]
+        name_products = [product for product in products if product.name == test_name]
         response = self.client.get(BASE_URL, query_string=f"name={str(test_name)}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         fetched_data = response.get_json()
