@@ -16,6 +16,7 @@ from service.models import db  # , MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
 from service.routes import init_db
 from service.utils import status
 from tests.factories import ProductFactory  # HTTP Status Codes
+
 # from urllib.parse import quote_plus
 
 
@@ -186,37 +187,37 @@ class TestYourResourceServer(TestCase):
     #     response = self.client.put(f"{BASE_URL}/{wrong_id}", json=new_product)
     #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_query_list_by_rating(self):
-        """It should Query Products by Rating"""
-        products = self._create_products(10)
-        product = {}
-        product["rating"] = None
-        product["no_of_users_rated"] = 0
-        # make one product has rating = None
-        self.client.put(f"{BASE_URL}/{products[1].id}", json=product)
-        products[1].rating = None
-        test_rating = int(products[0].rating)
-        rating_products = [
-            product
-            for product in products
-            if product.rating is not None and product.rating >= test_rating
-        ]
-        response = self.client.get(BASE_URL, query_string=f"rating={str(test_rating)}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), len(rating_products))
+    # def test_query_list_by_rating(self):
+    #     """It should Query Products by Rating"""
+    #     products = self._create_products(10)
+    #     product = {}
+    #     product["rating"] = None
+    #     product["no_of_users_rated"] = 0
+    #     # make one product has rating = None
+    #     self.client.put(f"{BASE_URL}/{products[1].id}", json=product)
+    #     products[1].rating = None
+    #     test_rating = int(products[0].rating)
+    #     rating_products = [
+    #         product
+    #         for product in products
+    #         if product.rating is not None and product.rating >= test_rating
+    #     ]
+    #     response = self.client.get(BASE_URL, query_string=f"rating={str(test_rating)}")
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = response.get_json()
+    #     self.assertEqual(len(data), len(rating_products))
 
-    def test_query_list_by_price(self):
-        """It should Query Products by Price"""
-        products = self._create_products(10)
-        test_price = products[0].price
-        price_products = [
-            product for product in products if product.price <= test_price
-        ]
-        response = self.client.get(BASE_URL, query_string=f"price={str(test_price)}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        self.assertEqual(len(data), len(price_products))
+    # def test_query_list_by_price(self):
+    #     """It should Query Products by Price"""
+    #     products = self._create_products(10)
+    #     test_price = products[0].price
+    #     price_products = [
+    #         product for product in products if product.price <= test_price
+    #     ]
+    #     response = self.client.get(BASE_URL, query_string=f"price={str(test_price)}")
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = response.get_json()
+    #     self.assertEqual(len(data), len(price_products))
 
     # def test_query_multiple(self):
     #     """It should Query Products by All Parameters"""

@@ -74,20 +74,15 @@ product_args.add_argument(
     "available",
     type=inputs.boolean,
     required=False,
-    help="List Products by availability"
+    help="List Products by availability",
 )
 product_args.add_argument(
-    "price", 
-    type=float,
-    required=False,
-    help="List Products by price"
+    "price", type=float, required=False, help="List Products by price"
 )
 product_args.add_argument(
-    "rating",
-    type=float,
-    required=False,
-    help="List Products by rating"
+    "rating", type=float, required=False, help="List Products by rating"
 )
+
 
 ######################################################################
 #  PATH: /products/{id}
@@ -236,21 +231,21 @@ class ProductCollection(Resource):
         results_all = [product.serialize() for product in products_all]
         args = product_args.parse_args()
         try:
-            if 'name' in args:
-                results = self.check_name(args['name'])
-                app.logger.info("Request for products with name : %s ", args['name'])
+            if "name" in args:
+                results = self.check_name(args["name"])
+                app.logger.info("Request for products with name : %s ", args["name"])
                 results_all = self.eliminate_product(results_all, results)
-            if 'category' in args:
-                results = self.check_category(args['category'])
+            if "category" in args:
+                results = self.check_category(args["category"])
                 results_all = self.eliminate_product(results_all, results)
-            if 'price' in args and args['price'] is not None:
-                results = self.check_price(args['price'])
+            if "price" in args and args["price"] is not None:
+                results = self.check_price(args["price"])
                 results_all = self.eliminate_product(results_all, results)
-            if 'rating' in args and args['rating'] is not None:
-                results = self.check_rating(args['rating'])
+            if "rating" in args and args["rating"] is not None:
+                results = self.check_rating(args["rating"])
                 results_all = self.eliminate_product(results_all, results)
-            if 'available' in args:
-                results = self.check_availability(args['available'])
+            if "available" in args:
+                results = self.check_availability(args["available"])
                 results_all = self.eliminate_product(results_all, results)
         except ValueError:
             return "", status.HTTP_406_NOT_ACCEPTABLE
