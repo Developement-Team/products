@@ -9,7 +9,7 @@ Describe what your service does here
 # import logging
 # from flask import Flask, request, url_for, jsonify, make_response, abort
 from flask import url_for, jsonify, request, abort
-from flask_restx import Resource, fields  # Api, reqparse, inputs
+from flask_restx import Resource, fields, reqparse, inputs  # Api, 
 from service.utils import status  # HTTP Status Codes
 from service.models import Product, MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
 
@@ -41,11 +41,11 @@ create_model = api.model(
         "available": fields.Boolean(
             required=True, description="Is the product available for purchase?"
         ),
-        "description": fields.String(description="The description of the product"),
+        "description": fields.String(required=True,description="The description of the product"),
         "price": fields.Float(required=True, description="The price of the product"),
         "rating": fields.Float(description="The cumulative rating of the product"),
         "number of ratings": fields.Integer(
-            description="The number of ratings given to to the product"
+            description="The number of people who rated the product"
         ),
     },
 )
@@ -60,6 +60,11 @@ product_model = api.inherit(
     },
 )
 
+# query string arguments
+product_args = reqparse.RequestParser()
+product_args.add_argument('name', type=str, required=False, help='List Products by name')
+product_args.add_argument('category', type=str, required=False, help='List Products by category')
+product_args.add_argument('available', type=inputs.boolean, required=False, help='List Products by availability')
 
 ######################################################################
 #  PATH: /products/{id}
@@ -83,7 +88,7 @@ class ProductResource(Resource):
     @api.response(404, "Product not found")
     @api.marshal_with(product_model)
     # @app.route("/products/<int:product_id>", methods=["GET"])
-    def get(product_id):
+    def get(self, product_id):
         """
         Retrieve a single Product
 
@@ -153,123 +158,117 @@ class ProductCollection(Resource):
     # LIST ALL PRODUCTS
     # ------------------------------------------------------------------
 
-
-def check_category(category):
-    products = Product.find_by_category(category)
-    results = [product.serialize() for product in products]
-    app.logger.info("Returning %d products", len(results))
-    return results
-
-
-def check_price(price):
-    price = float(price)
-    if price < 0:
-        raise ValueError
-    products = Product.find_by_price(price)
-    results = [product.serialize() for product in products]
-    results.sort(key=lambda n: n["price"], reverse=True)
-    return results
+    @api.doc('list_products')
+    @api.expect(product_args, validate=True)
+    @api.marshal_list_with(product_model)
+    def check_category(category):
+        products = Product.find_by_category(category)
+        results = [product.serialize() for product in products]
+        app.logger.info("Returning %d products", len(results))
+        return results
 
 
-def check_rating(rating_str):
-    rating = float(rating_str)
-    if rating < 1 or rating > 5:
-        raise ValueError
-    products = Product.find_by_rating(rating)
-    results = [
-        product.serialize() for product in products if product.rating is not None
-    ]
-    results.sort(key=lambda n: n["rating"], reverse=True)
-    return results
+    def check_price(price):
+        price = float(price)
+        if price < 0:
+            raise ValueError
+        products = Product.find_by_price(price)
+        results = [product.serialize() for product in products]
+        results.sort(key=lambda n: n["price"], reverse=True)
+        return results
+    
+    def check_rating(rating_str):
+        rating = float(rating_str)
+        if rating < 1 or rating > 5:
+            raise ValueError
+        products = Product.find_by_rating(rating)
+        results = [
+            product.serialize() for product in products if product.rating is not None
+        ]
+        results.sort(key=lambda n: n["rating"], reverse=True)
+        return results
 
+    def check_name(name_str):
+        products = Product.find_by_name(name_str)
+        results = [product.serialize() for product in products]
+        return results
 
-def check_name(name_str):
-    products = Product.find_by_name(name_str)
-    results = [product.serialize() for product in products]
-    return results
+    def eliminate_product(products_all, products):
+        result = []
+        for product in products_all:
+            if product in products:
+                result.append(product)
+        return result
 
+    def check_availability(available):
+        if available != "True":
+            raise ValueError
+        products = Product.find_by_availability()
+        results = [product.serialize() for product in products]
+        return results
 
-def eliminate_product(products_all, products):
-    result = []
-    for product in products_all:
-        if product in products:
-            result.append(product)
-    return result
-
-
-def check_availability(available):
-    if available != "True":
-        raise ValueError
-    products = Product.find_by_availability()
-    results = [product.serialize() for product in products]
-    return results
-
-
-@app.route("/products", methods=["GET"])
-def list_products():
-    app.logger.info("Request for Product List")
-    products_all = Product.all()
-    results_all = [product.serialize() for product in products_all]
-    rating_str = request.args.get("rating")
-    category = request.args.get("category")
-    price = request.args.get("price")
-    available = request.args.get("available")
-    name_str = request.args.get("name")
-    try:
-        if name_str:
-            results = check_name(name_str)
-            app.logger.info("Request for products with name : %s ", name_str)
-            results_all = eliminate_product(results_all, results)
-        if category:
-            results = check_category(category)
-            results_all = eliminate_product(results_all, results)
-        if price:
-            results = check_price(price)
-            results_all = eliminate_product(results_all, results)
-        if rating_str:
-            results = check_rating(rating_str)
-            results_all = eliminate_product(results_all, results)
-        if available:
-            results = check_availability(available)
-            results_all = eliminate_product(results_all, results)
-    except ValueError:
-        return "", status.HTTP_406_NOT_ACCEPTABLE
-    app.logger.info("Returning %d products", len(results_all))
-    return jsonify(results_all), status.HTTP_200_OK
+    # @app.route("/products", methods=["GET"])
+    def get(self):
+        app.logger.info("Request for Product List")
+        products_all = Product.all()
+        results_all = [product.serialize() for product in products_all]
+        rating_str = product_args.parse_args()["rating"]
+        category = product_args.parse_args()["category"]
+        price = product_args.parse_args()["price"]
+        available = product_args.parse_args()["available"]
+        name_str = product_args.parse_args()["name"]
+        try:
+            if name_str:
+                results = check_name(name_str)
+                app.logger.info("Request for products with name : %s ", name_str)
+                results_all = eliminate_product(results_all, results)
+            if category:
+                results = check_category(category)
+                results_all = eliminate_product(results_all, results)
+            if price:
+                results = check_price(price)
+                results_all = eliminate_product(results_all, results)
+            if rating_str:
+                results = check_rating(rating_str)
+                results_all = eliminate_product(results_all, results)
+            if available:
+                results = check_availability(available)
+                results_all = eliminate_product(results_all, results)
+        except ValueError:
+            return "", status.HTTP_406_NOT_ACCEPTABLE
+        app.logger.info("Returning %d products", len(results_all))
+        return results_all, status.HTTP_200_OK
 
     # ------------------------------------------------------------------
     # ADD A NEW PRODUCT
     # ------------------------------------------------------------------
 
+    @api.doc('create_pets')
+    @api.response(400, 'The posted data was not valid')
+    @api.expect(create_model)
+    @api.marshal_with(product_model, code=201)
+    # @app.route("/products", methods=["POST"])
+    def post(self):
+        """
+        Creates a Product
+        This endpoint will create a Product based the data in the body that is posted
+        """
+        app.logger.info("Request to create a product")
+        check_content_type("application/json")
+        data = api.payload
 
-@app.route("/products", methods=["POST"])
-def create_products():
-    """
-    Creates a Product
-    This endpoint will create a Product based the data in the body that is posted
-    """
-    app.logger.info("Request to create a product")
-    check_content_type("application/json")
-    data = request.get_json()
-    data["rating"] = (
-        None
-        if "rating" not in data or data["rating"] is None
-        else float(data["rating"])
-    )
-    data["no_of_users_rated"] = (
-        0
-        if "no_of_users_rated" not in data or data["no_of_users_rated"] is None
-        else int(data["no_of_users_rated"])
-    )
-    product = Product()
-    product.deserialize(data)
-    app.logger.info("Here Deserialization done")
-    product.create()
-    message = product.serialize()
-    location_url = url_for("get_products", product_id=product.id, _external=True)
+        data["rating"] =  None if "rating" not in data or data["rating"] is None else float(data["rating"])
+        data["no_of_users_rated"] = 0 if "no_of_users_rated" not in data or data["no_of_users_rated"] is None else int(data["no_of_users_rated"])
 
-    app.logger.info("Product with ID [%s] created.", product.id)
-    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+        product = Product()
+        product.deserialize(data)
+        app.logger.info("Here Deserialization done")
+        product.create()
+        message = product.serialize()
+        location_url = api.url_for(ProductResource, product_id=product.id, _external=True)
+
+        app.logger.info("Product with ID [%s] created.", product.id)
+        return message, status.HTTP_201_CREATED, {"Location": location_url}
 
     ######################################################################
     #  PATH: /products/{id}/rating
