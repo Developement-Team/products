@@ -126,8 +126,13 @@ class ProductResource(Resource):
     # ------------------------------------------------------------------
     # UPDATE AN EXISTING PRODUCT
     # ------------------------------------------------------------------
-    @app.route("/products/<int:product_id>", methods=["PUT"])
-    def update_products(product_id):
+    @api.doc('update_pets', security='apikey')
+    @api.response(404, 'Product not found')
+    @api.response(400, 'The posted Product data was not valid')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
+    #@app.route("/products/<int:product_id>", methods=["PUT"])
+    def put(self, product_id):
         """
         Update a Product
 
@@ -142,19 +147,20 @@ class ProductResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 f"Product with id '{product_id}' was not found.",
             )
-
-        product.deserialize(request.get_json())
+        app.logger.info('Payload = %s ', api.payload)
+        data = api.payload;
+        product.deserialize(data)
         product.id = product_id
         product.update()
-
         app.logger.info("Product with ID [%s] updated.", product.id)
-        return jsonify(product.serialize()), status.HTTP_200_OK
+        return product.serialize(), status.HTTP_200_OK
 
     # ------------------------------------------------------------------
     # DELETE A PRODUCT
     # ------------------------------------------------------------------
-    @app.route("/products/<int:product_id>", methods=["DELETE"])
-    def delete_products(product_id):
+    #@app.route("/products/<int:product_id>", methods=["DELETE"])
+    @api.response(204, 'Pet deleted')
+    def delete(self, product_id):
         """Delete a Product"""
         app.logger.info("Request to delete product with id: %s", product_id)
         product = Product.find(product_id)
@@ -212,14 +218,17 @@ class ProductCollection(Resource):
 
     def eliminate_product(self, products_all, products):
         result = []
+        tmpset = set()
+        for product in products:
+            tmpset.add(int(product["id"]))
         for product in products_all:
-            if product in products:
+            if int(product["id"]) in tmpset :
                 result.append(product)
         return result
 
     def check_availability(self, available):
-        if available != "True":
-            raise ValueError
+        # if available != "True" or available != "true":
+        #    raise ValueError
         products = Product.find_by_availability()
         results = [product.serialize() for product in products]
         return results
@@ -231,21 +240,25 @@ class ProductCollection(Resource):
         results_all = [product.serialize() for product in products_all]
         args = product_args.parse_args()
         try:
-            if "name" in args:
+            if args['name']:
                 results = self.check_name(args["name"])
                 app.logger.info("Request for products with name : %s ", args["name"])
                 results_all = self.eliminate_product(results_all, results)
-            if "category" in args:
+            if args['category']:
                 results = self.check_category(args["category"])
+                app.logger.info("Request for products with category : %s ", args["category"])
+                app.logger.info("Length of results : %s ", results)
                 results_all = self.eliminate_product(results_all, results)
-            if "price" in args and args["price"] is not None:
+                app.logger.info("Length of results_all : %s ", results_all)
+            if args['price'] is not None :
                 results = self.check_price(args["price"])
                 results_all = self.eliminate_product(results_all, results)
-            if "rating" in args and args["rating"] is not None:
+            if args["rating"] is not None:
                 results = self.check_rating(args["rating"])
                 results_all = self.eliminate_product(results_all, results)
-            if "available" in args:
+            if args["available"] is not None:
                 results = self.check_availability(args["available"])
+                app.logger.info("Request for products with available : %s ", args["available"])
                 results_all = self.eliminate_product(results_all, results)
         except ValueError:
             return "", status.HTTP_406_NOT_ACCEPTABLE
@@ -293,14 +306,20 @@ class ProductCollection(Resource):
         app.logger.info("Product with ID [%s] created.", product.id)
         return message, status.HTTP_201_CREATED, {"Location": location_url}
 
-    ######################################################################
-    #  PATH: /products/{id}/rating
-    ######################################################################
-    # ------------------------------------------------------------------
-    # UPDATE THE RATING OF A PRODUCT
-    # ------------------------------------------------------------------
-    @app.route("/products/<int:product_id>/rating", methods=["PUT"])
-    def update_rating_of_product(product_id):
+######################################################################
+#  PATH: /products/{id}/rating
+######################################################################
+# ------------------------------------------------------------------
+# UPDATE THE RATING OF A PRODUCT
+# ------------------------------------------------------------------
+@api.route("/products/<product_id>/rating")
+@api.param('product_id','The Product Identifier')
+class RatingResource(Resource):
+    '''Rating actions of a Product'''
+    @api.doc('Update The Rating')
+    @api.response(404, 'Product not found')
+    @api.response(406, 'JSON Not acceptable')
+    def put(self, product_id):
         """
         Updates the rating of a product on the basis of feedback provided.
         Args:
@@ -317,7 +336,7 @@ class ProductCollection(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
-        new_rating = request.get_json()
+        new_rating = api.payload
         if not isinstance(new_rating["rating"], int):
             abort(
                 status.HTTP_406_NOT_ACCEPTABLE,
@@ -343,16 +362,22 @@ class ProductCollection(Resource):
                 product.no_of_users_rated = product.no_of_users_rated + 1
             product.update()
             app.logger.info("Product with ID [%s] updated.", product.id)
-        return jsonify(product.serialize()), status.HTTP_200_OK
+        return product.serialize(), status.HTTP_200_OK
 
-    ######################################################################
-    #  PATH: /products/{id}/price
-    ######################################################################
-    # ------------------------------------------------------------------
-    # UPDATE THE PRICE OF A PRODUCT
-    # ------------------------------------------------------------------
-    @app.route("/products/<int:product_id>/price", methods=["PUT"])
-    def update_price_of_product(product_id):
+######################################################################
+#  PATH: /products/{id}/price
+######################################################################
+# ------------------------------------------------------------------
+# UPDATE THE PRICE OF A PRODUCT
+# ------------------------------------------------------------------
+@api.route("/products/<product_id>/price")
+@api.param('product_id','The Product Identifier')
+class PriceResource(Resource):
+    '''Price Actions of a Product'''
+    @api.doc('Update The Price')
+    @api.response(404, 'Product not found')
+    @api.response(406, 'JSON Format Not acceptable')
+    def put(self, product_id):
         """
         Updates the price of a product on the basis of feedback provided.
         Args:
