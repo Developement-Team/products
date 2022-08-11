@@ -213,7 +213,7 @@ $(function () {
         let available = $("#product_available").val()=="True";
         let rating = $("#product_rating").val();
         let queryString = ""
-
+        let data = {}
         if (name) {
             queryString += 'name=' + name
         }
@@ -244,16 +244,12 @@ $(function () {
         if(queryString){
             ajax = $.ajax({
                 type: "GET",
-                url: `/api/products?${queryString}`,
-                contentType: "application/json",
-                data: ''
+                url: `/api/products?${queryString}`
             })
         }else{
             ajax = $.ajax({
                 type: "GET",
-                url: `/api/products`,
-                contentType: "application/json",
-                data: ''
+                url: `/api/products`
             })
         }
 

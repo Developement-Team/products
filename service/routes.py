@@ -8,7 +8,8 @@ Describe what your service does here
 # import sys
 # import logging
 # from flask import Flask, request, url_for, jsonify, make_response, abort
-from flask import jsonify, request, abort  # url_for
+# from importlib.metadata import requires
+from flask import request, abort  # url_for, jsonify
 from flask_restx import Resource, fields, reqparse, inputs  # Api,
 from service.utils import status  # HTTP Status Codes
 from service.models import Product, MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
@@ -46,7 +47,7 @@ create_model = api.model(
         ),
         "price": fields.Float(required=True, description="The price of the product"),
         "rating": fields.Float(description="The cumulative rating of the product"),
-        "number of ratings": fields.Integer(
+        "no_of_users_rated": fields.Integer(
             description="The number of people who rated the product"
         ),
     },
@@ -81,6 +82,10 @@ product_args.add_argument(
 )
 product_args.add_argument(
     "rating", type=float, required=False, help="List Products by rating"
+)
+
+product_args.add_argument(
+    "no_of_users_rated", type=int, required=False, help="No of users rated"
 )
 
 
@@ -131,7 +136,6 @@ class ProductResource(Resource):
     @api.response(400, 'The posted Product data was not valid')
     @api.expect(product_model)
     @api.marshal_with(product_model)
-    #@app.route("/products/<int:product_id>", methods=["PUT"])
     def put(self, product_id):
         """
         Update a Product
@@ -148,7 +152,7 @@ class ProductResource(Resource):
                 f"Product with id '{product_id}' was not found.",
             )
         app.logger.info('Payload = %s ', api.payload)
-        data = api.payload;
+        data = api.payload
         product.deserialize(data)
         product.id = product_id
         product.update()
@@ -158,7 +162,6 @@ class ProductResource(Resource):
     # ------------------------------------------------------------------
     # DELETE A PRODUCT
     # ------------------------------------------------------------------
-    #@app.route("/products/<int:product_id>", methods=["DELETE"])
     @api.response(204, 'Pet deleted')
     def delete(self, product_id):
         """Delete a Product"""
@@ -222,7 +225,7 @@ class ProductCollection(Resource):
         for product in products:
             tmpset.add(int(product["id"]))
         for product in products_all:
-            if int(product["id"]) in tmpset :
+            if int(product["id"]) in tmpset:
                 result.append(product)
         return result
 
@@ -238,7 +241,9 @@ class ProductCollection(Resource):
         app.logger.info("Request for Product List")
         products_all = Product.all()
         results_all = [product.serialize() for product in products_all]
+        app.logger.info("Result_all : %s ", results_all)
         args = product_args.parse_args()
+        app.logger.info("Got the Product Args : %s ", args)
         try:
             if args['name']:
                 results = self.check_name(args["name"])
@@ -250,7 +255,7 @@ class ProductCollection(Resource):
                 app.logger.info("Length of results : %s ", results)
                 results_all = self.eliminate_product(results_all, results)
                 app.logger.info("Length of results_all : %s ", results_all)
-            if args['price'] is not None :
+            if args['price'] is not None:
                 results = self.check_price(args["price"])
                 results_all = self.eliminate_product(results_all, results)
             if args["rating"] is not None:
@@ -282,7 +287,7 @@ class ProductCollection(Resource):
         app.logger.info("Request to create a product")
         check_content_type("application/json")
         data = api.payload
-
+        app.logger.info("Post Args : %s ", data)
         data["rating"] = (
             None
             if "rating" not in data or data["rating"] is None
@@ -306,6 +311,7 @@ class ProductCollection(Resource):
         app.logger.info("Product with ID [%s] created.", product.id)
         return message, status.HTTP_201_CREATED, {"Location": location_url}
 
+
 ######################################################################
 #  PATH: /products/{id}/rating
 ######################################################################
@@ -313,7 +319,7 @@ class ProductCollection(Resource):
 # UPDATE THE RATING OF A PRODUCT
 # ------------------------------------------------------------------
 @api.route("/products/<product_id>/rating")
-@api.param('product_id','The Product Identifier')
+@api.param('product_id', 'The Product Identifier')
 class RatingResource(Resource):
     '''Rating actions of a Product'''
     @api.doc('Update The Rating')
@@ -364,6 +370,7 @@ class RatingResource(Resource):
             app.logger.info("Product with ID [%s] updated.", product.id)
         return product.serialize(), status.HTTP_200_OK
 
+
 ######################################################################
 #  PATH: /products/{id}/price
 ######################################################################
@@ -371,7 +378,7 @@ class RatingResource(Resource):
 # UPDATE THE PRICE OF A PRODUCT
 # ------------------------------------------------------------------
 @api.route("/products/<product_id>/price")
-@api.param('product_id','The Product Identifier')
+@api.param('product_id', 'The Product Identifier')
 class PriceResource(Resource):
     '''Price Actions of a Product'''
     @api.doc('Update The Price')
@@ -415,15 +422,15 @@ class PriceResource(Resource):
         app.logger.info("Price of product with ID [%s] updated.", product.id)
         return product.serialize(), status.HTTP_200_OK
 
-    ######################################################################
-    #  PATH: /products/{id}/description
-    ######################################################################
-    # ------------------------------------------------------------------
-    # UPDATE THE DESCRIPTION OF A PRODUCT
-    # ------------------------------------------------------------------
-    # @app.route("/products/<int:product_id>/description", methods=["PUT"])
+
+######################################################################
+#  PATH: /products/{id}/description
+######################################################################
+# ------------------------------------------------------------------
+# UPDATE THE DESCRIPTION OF A PRODUCT
+# ------------------------------------------------------------------
 @api.route("/products/<product_id>/description")
-@api.param('product_id','The Product Identifier')
+@api.param('product_id', 'The Product Identifier')
 class DescriptionResource(Resource):
     '''Description Actions of a Product'''
     @api.doc('Update The Description')
@@ -470,15 +477,15 @@ class DescriptionResource(Resource):
         app.logger.info("Description of product with ID [%s] updated.", product.id)
         return product.serialize(), status.HTTP_200_OK
 
-    ######################################################################
-    #  PATH: /products/{id}/category
-    ######################################################################
-    # ------------------------------------------------------------------
-    # UPDATE THE CATEGORY OF A PRODUCT
-    # ------------------------------------------------------------------
-    # @app.route("/products/<int:product_id>/category", methods=["PUT"])
+
+######################################################################
+#  PATH: /products/{id}/category
+######################################################################
+# ------------------------------------------------------------------
+# UPDATE THE CATEGORY OF A PRODUCT
+# ------------------------------------------------------------------
 @api.route("/products/<product_id>/category")
-@api.param('product_id','The Product Identifier')
+@api.param('product_id', 'The Product Identifier')
 class CategoryResource(Resource):
     '''Category Actions of a Product'''
     @api.doc('Update The Category')
