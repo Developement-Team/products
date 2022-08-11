@@ -394,7 +394,7 @@ class PriceResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
-        new_price = request.get_json()
+        new_price = api.payload
         if "price" not in new_price or new_price["price"] is None:
             abort(
                 status.HTTP_406_NOT_ACCEPTABLE,
@@ -413,7 +413,7 @@ class PriceResource(Resource):
         product.price = new_price["price"]
         product.update()
         app.logger.info("Price of product with ID [%s] updated.", product.id)
-        return jsonify(product.serialize()), status.HTTP_200_OK
+        return product.serialize(), status.HTTP_200_OK
 
     ######################################################################
     #  PATH: /products/{id}/description
@@ -421,8 +421,15 @@ class PriceResource(Resource):
     # ------------------------------------------------------------------
     # UPDATE THE DESCRIPTION OF A PRODUCT
     # ------------------------------------------------------------------
-    @app.route("/products/<int:product_id>/description", methods=["PUT"])
-    def update_description_of_product(product_id):
+    # @app.route("/products/<int:product_id>/description", methods=["PUT"])
+@api.route("/products/<product_id>/description")
+@api.param('product_id','The Product Identifier')
+class DescriptionResource(Resource):
+    '''Description Actions of a Product'''
+    @api.doc('Update The Description')
+    @api.response(404, 'Product not found')
+    @api.response(406, 'JSON Format Not acceptable')
+    def put(self, product_id):
         """
         Updates the description of a product on the basis of feedback provided.
         Args:
@@ -439,7 +446,7 @@ class PriceResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
-        new_description = request.get_json()
+        new_description = api.payload
         if (
             "description" not in new_description
             or new_description["description"] is None
@@ -461,7 +468,7 @@ class PriceResource(Resource):
         product.description = new_description["description"]
         product.update()
         app.logger.info("Description of product with ID [%s] updated.", product.id)
-        return jsonify(product.serialize()), status.HTTP_200_OK
+        return product.serialize(), status.HTTP_200_OK
 
     ######################################################################
     #  PATH: /products/{id}/category
@@ -469,8 +476,15 @@ class PriceResource(Resource):
     # ------------------------------------------------------------------
     # UPDATE THE CATEGORY OF A PRODUCT
     # ------------------------------------------------------------------
-    @app.route("/products/<int:product_id>/category", methods=["PUT"])
-    def update_category_of_product(product_id):
+    # @app.route("/products/<int:product_id>/category", methods=["PUT"])
+@api.route("/products/<product_id>/category")
+@api.param('product_id','The Product Identifier')
+class CategoryResource(Resource):
+    '''Category Actions of a Product'''
+    @api.doc('Update The Category')
+    @api.response(404, 'Product not found')
+    @api.response(406, 'JSON Format Not acceptable')
+    def put(self, product_id):
         """
         Updates the category of a product on the basis of feedback provided.
         Args:
@@ -487,7 +501,7 @@ class PriceResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
-        new_category = request.get_json()
+        new_category = api.payload
         if "category" not in new_category or new_category["category"] is None:
             abort(
                 status.HTTP_406_NOT_ACCEPTABLE,
@@ -506,7 +520,7 @@ class PriceResource(Resource):
         product.category = new_category["category"]
         product.update()
         app.logger.info("Description of product with ID [%s] updated.", product.id)
-        return jsonify(product.serialize()), status.HTTP_200_OK
+        return product.serialize(), status.HTTP_200_OK
 
 
 ######################################################################

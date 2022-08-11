@@ -12,7 +12,7 @@ from unittest import TestCase
 # from unittest.mock import MagicMock, patch
 from service import app
 from service.models import Product
-from service.models import db  # , MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
+from service.models import db, MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
 from service.routes import init_db
 from service.utils import status
 from tests.factories import ProductFactory  # HTTP Status Codes
@@ -181,9 +181,8 @@ class TestYourResourceServer(TestCase):
 
         # update a not exist id
         new_product = response.get_json()
-        logging.debug(new_product)
         new_product["category"] = "unknown"
-        wrong_id = new_product["id"] + 1
+        wrong_id = int(new_product["id"]) + 1
         response = self.client.put(f"{BASE_URL}/{wrong_id}", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -530,7 +529,7 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         new_product = response.get_json()
         logging.debug(new_product)
-        wrong_id = new_product["id"] + 1
+        wrong_id = int(new_product["id"]) + 1
         myJson = {}
         myJson["rating"] = 3
         response = self.client.put(f"{BASE_URL}/{wrong_id}/rating", json=myJson)
@@ -539,7 +538,7 @@ class TestYourResourceServer(TestCase):
     def test_user_sends_incorrect_availability_param(self):
         """The user sends an incorrect availability Parameter"""
         response = self.client.get(BASE_URL, query_string="available=IncorrectString")
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_price_bad_id(self):
         """It should return 404 for bad id in update price"""
@@ -547,7 +546,7 @@ class TestYourResourceServer(TestCase):
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        id = response.get_json()["id"]
+        id = int(response.get_json()["id"])
 
         # update the product price
         new_product = {}
@@ -583,7 +582,7 @@ class TestYourResourceServer(TestCase):
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        id = response.get_json()["id"]
+        id = int(response.get_json()["id"])
 
         # update the product description
         new_product = {}
@@ -597,7 +596,7 @@ class TestYourResourceServer(TestCase):
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        id = response.get_json()["id"]
+        id = int(response.get_json()["id"])
 
         # update the product description
         new_product = {}
@@ -619,12 +618,13 @@ class TestYourResourceServer(TestCase):
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        id = response.get_json()["id"]
+        id = int(response.get_json()["id"])
 
-    # update the product category
+        # update the product category
         new_product = {}
         new_product["category"] = "THIS IS TEST category"
-        response = self.client.put(f"{BASE_URL}/{id+1}/category", json=new_product)
+        id = id + 1
+        response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_category_bad_type(self):
@@ -633,7 +633,7 @@ class TestYourResourceServer(TestCase):
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        id = response.get_json()["id"]
+        id = int(response.get_json()["id"])
 
         # update the product category
         new_product = {}
