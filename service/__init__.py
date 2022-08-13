@@ -7,13 +7,32 @@ and SQL database
 import sys
 
 # import logging
+# import os
 from flask import Flask
+from flask_restx import Api
 from service import config
 from service.utils import log_handlers
 
 # Create Flask application
 app = Flask(__name__)
+app.url_map.strict_slashes = False
+# make sure the routes without another slash would work
 app.config.from_object(config)
+
+######################################################################
+# Configure Swagger before initializing it
+######################################################################
+api = Api(
+    app,
+    version="1.0.0",
+    title="Product Demo REST API Service",
+    description="This is a sample server Product store server.",
+    default="products",
+    default_label="Product shop operations",
+    doc="/apidocs",  # default also could use doc='/apidocs/'
+    #   authorizations=authorizations,
+    prefix="/api",
+)
 
 # Dependencies require we import the routes AFTER the Flask app is created
 # pylint: disable=wrong-import-position, wrong-import-order

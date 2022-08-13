@@ -123,9 +123,9 @@ Scenario: Create a product
     And I should see "Men's clothing" in the "Category" field
     And I should see "black winter jacket" in the "Description" field
     And I should see "True" in the "Available" dropdown
-    And I should see "8" in the "Price" field
+    And I should see "18" in the "Price" field
     And I should see "3" in the "Rating" field
-    And I should see "4" in the "Num Rating" field
+    And I should see "4" in the "num rating" field
 
 Scenario: Update a Product name
     When I visit the "Home Page"

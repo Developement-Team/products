@@ -69,7 +69,7 @@ $(function () {
         
         let ajax = $.ajax({
             type: "POST",
-            url: "/products",
+            url: "/api/products",
             contentType: "application/json",
             data: JSON.stringify(data),
         });
@@ -126,7 +126,7 @@ $(function () {
 
         let ajax = $.ajax({
                 type: "PUT",
-                url: `/products/${product_id}`,
+                url: `/api/products/${product_id}`,
                 contentType: "application/json",
                 data: JSON.stringify(data)
             })
@@ -153,7 +153,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/products/${product_id}`,
+            url: `/api/products/${product_id}`,
             contentType: "application/json",
             data: ''
         })
@@ -180,7 +180,7 @@ $(function () {
         
         let ajax = $.ajax({
             type : "DELETE",
-            url : `/products/${product_id}`,
+            url : `/api/products/${product_id}`,
             contentType: "application/json"
         })
         ajax.done(function(res){
@@ -213,7 +213,7 @@ $(function () {
         let available = $("#product_available").val()=="True";
         let rating = $("#product_rating").val();
         let queryString = ""
-
+        let data = {}
         if (name) {
             queryString += 'name=' + name
         }
@@ -241,12 +241,17 @@ $(function () {
 
         $("#flash_message").empty();
 
-        let ajax = $.ajax({
-            type: "GET",
-            url: `/products?${queryString}`,
-            contentType: "application/json",
-            data: ''
-        })
+        if(queryString){
+            ajax = $.ajax({
+                type: "GET",
+                url: `/api/products?${queryString}`
+            })
+        }else{
+            ajax = $.ajax({
+                type: "GET",
+                url: `/api/products`
+            })
+        }
 
         ajax.done(function(res){
             //alert(res.toSource())
@@ -297,7 +302,7 @@ $(function () {
 
         let ajax = $.ajax({
             type : "PUT",
-            url : `/products/${product_id}/rating`,
+            url : `/api/products/${product_id}/rating`,
             contentType: "application/json",
             data: JSON.stringify(data)
         })
