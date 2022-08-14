@@ -25,20 +25,6 @@ logger = logging.getLogger("flask.app")
 db = SQLAlchemy()
 
 
-# def init_db(app):
-#     """Initialize the SQLAlchemy app"""
-#     Product.init_db(app)
-# Defining acceptable input for names and descriptions
-
-
-# def acceptable_names():
-#     return ["shirt", "sweater", "pants", "lounge_wear"]
-
-
-# def acceptable_description():
-#     return ["unavailable", "Relaxed Fit", "Slim Fit"]
-
-
 class DataValidationError(Exception):
     """Used for an data validation errors when deserializing"""
 
