@@ -36,13 +36,13 @@ class Product(db.Model):
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63), nullable=False, unique=True)
+    name = db.Column(db.String(63), nullable=True, unique=True)
     description = db.Column(
         db.String(MAX_DESCRIPTION_LENGTH),
         nullable=False,
         server_default=("unavailable"),
     )
-    category = db.Column(db.String(63), nullable=False)
+    category = db.Column(db.String(63), nullable=True)
     price = db.Column(db.Float(), nullable=False)
     available = db.Column(db.Boolean(), nullable=False, default=False)
     rating = db.Column(db.Float, nullable=True)
@@ -155,6 +155,9 @@ class Product(db.Model):
     def check_name(self, name):
         if not isinstance(name, str):
             raise TypeError
+        elif name == "":
+            raise DataValidationError(
+              "name field cannot be empty ")
         else:
             self.name = name
 
@@ -167,6 +170,9 @@ class Product(db.Model):
     def check_category(self, category):
         if not isinstance(category, str):
             raise TypeError
+        elif category == "":
+            raise DataValidationError(
+                "category field cannot be empty ")
         else:
             self.category = category
 
