@@ -212,6 +212,7 @@ $(function () {
         let category = $("#product_category").val();
         let available = $("#product_available").val()=="True";
         let rating = $("#product_rating").val();
+        let price = $("#product_price").val();
         let queryString = ""
         let data = {}
         if (name) {
@@ -236,6 +237,13 @@ $(function () {
                 queryString += '&rating=' + rating
             }else{
                 queryString += 'rating=' + rating
+            }
+        }
+        if (price) {
+            if (queryString.length > 0) {
+                queryString += '&price=' + price
+            } else {
+                queryString += 'price=' + price
             }
         }
 
