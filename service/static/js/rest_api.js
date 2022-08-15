@@ -212,6 +212,7 @@ $(function () {
         let category = $("#product_category").val();
         let available = $("#product_available").val()=="True";
         let rating = $("#product_rating").val();
+        let price = $("#product_price").val();
         let queryString = ""
         let data = {}
         if (name) {
@@ -236,6 +237,13 @@ $(function () {
                 queryString += '&rating=' + rating
             }else{
                 queryString += 'rating=' + rating
+            }
+        }
+        if (price) {
+            if (queryString.length > 0) {
+                queryString += '&price=' + price
+            } else {
+                queryString += 'price=' + price
             }
         }
 
@@ -269,7 +277,7 @@ $(function () {
             let firstProduct = "";
             for(let i = 0; i < res.length; i++) {
                 let product = res[i];
-                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.description}</td><td>${product.available}</td><td>${product.price}</td><td>${product.rating}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.description}</td><td>${product.available}</td><td>${product.price}</td><td>${product.rating.toFixed(2)}</td></tr>`;
                 if (i == 0) {
                     firstProduct = product;
                 }
