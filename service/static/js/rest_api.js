@@ -17,7 +17,7 @@ $(function () {
         $("#product_description").val(res.description);
         $("#product_available").val(res.available);
         $("#product_price").val(res.price);
-        $("#product_rating").val(res.rating);
+        $("#product_rating").val(res.rating.toFixed(2));
         $("#product_num_rating").val(res.no_of_users_rated);
     }
 
