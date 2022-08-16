@@ -89,7 +89,6 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertIn(b"Product Demo REST API Service", resp.data)
 
-
     def test_get_product_list(self):
         """It should Get a list of Products"""
         self._create_products(5)
@@ -663,6 +662,7 @@ class TestYourResourceServer(TestCase):
         new_product["category"] = None
         response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
     def test_update_bad_category(self):
         """It should return 400 for bad category in update category"""
         # create a product to update
