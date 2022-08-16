@@ -61,18 +61,6 @@ $(function () {
         }else{
             available = "False"
         }
-        // if (rating != null ){
-        //     product_rating = parseFloat(rating)
-        // }
-        // else{
-        //     product_rating = null
-        // }
-        // if (num_rating != null){
-        //     product_num_rating = parseInt(num_rating)
-        // }
-        // else{
-        //     product_num_rating = null
-        // }
         let data = {
             "name": name,
             "category": category,
