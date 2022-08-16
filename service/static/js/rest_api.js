@@ -11,13 +11,19 @@ $(function () {
         }else{
             res.available = "False"
         }
+        if (res.rating != null){
+            product_rating = res.rating.toFixed(2)
+        }
+        else{
+            product_rating = null
+        }
         $("#product_id").val(res.id);
         $("#product_name").val(res.name);
         $("#product_category").val(res.category);
         $("#product_description").val(res.description);
         $("#product_available").val(res.available);
         $("#product_price").val(res.price);
-        $("#product_rating").val(res.rating.toFixed(2));
+        $("#product_rating").val(product_rating);
         $("#product_num_rating").val(res.no_of_users_rated);
     }
 
@@ -55,6 +61,18 @@ $(function () {
         }else{
             available = "False"
         }
+        // if (rating != null ){
+        //     product_rating = parseFloat(rating)
+        // }
+        // else{
+        //     product_rating = null
+        // }
+        // if (num_rating != null){
+        //     product_num_rating = parseInt(num_rating)
+        // }
+        // else{
+        //     product_num_rating = null
+        // }
         let data = {
             "name": name,
             "category": category,
@@ -277,7 +295,8 @@ $(function () {
             let firstProduct = "";
             for(let i = 0; i < res.length; i++) {
                 let product = res[i];
-                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.description}</td><td>${product.available}</td><td>${product.price}</td><td>${product.rating.toFixed(2)}</td></tr>`;
+                if(product.rating == null) table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.description}</td><td>${product.available}</td><td>${product.price}</td><td>Not-Applicable</td></tr>`;
+                else table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.description}</td><td>${product.available}</td><td>${product.price}</td><td>${product.rating.toFixed(2)}</td></tr>`;
                 if (i == 0) {
                     firstProduct = product;
                 }
