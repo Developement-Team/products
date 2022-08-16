@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: products
-        image: us.icr.io/hw2544/products:23
+        image: us.icr.io/hw2544/products:1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
