@@ -325,6 +325,8 @@ class RatingResource(Resource):
     @api.doc('Update The Rating')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the rating of a product on the basis of feedback provided.
@@ -342,6 +344,7 @@ class RatingResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.info('Payload = %s ', api.payload)
         new_rating = api.payload
         if not isinstance(new_rating["rating"], int):
             abort(
@@ -384,6 +387,8 @@ class PriceResource(Resource):
     @api.doc('Update The Price')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Format Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the price of a product on the basis of feedback provided.
@@ -401,6 +406,7 @@ class PriceResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.info('Payload = %s ', api.payload)
         new_price = api.payload
         if "price" not in new_price or new_price["price"] is None:
             abort(
@@ -436,6 +442,8 @@ class DescriptionResource(Resource):
     @api.doc('Update The Description')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Format Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the description of a product on the basis of feedback provided.
@@ -453,6 +461,7 @@ class DescriptionResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.info('Payload = %s ', api.payload)
         new_description = api.payload
         if (
             "description" not in new_description
@@ -491,6 +500,8 @@ class CategoryResource(Resource):
     @api.doc('Update The Category')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Format Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the category of a product on the basis of feedback provided.
@@ -508,6 +519,7 @@ class CategoryResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.info('Payload = %s ', api.payload)
         new_category = api.payload
         if "category" not in new_category or new_category["category"] is None:
             abort(
