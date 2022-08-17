@@ -12,7 +12,7 @@ Describe what your service does here
 from flask import request, abort  # url_for, jsonify
 from flask_restx import Resource, fields, reqparse, inputs  # Api,
 from service.utils import status  # HTTP Status Codes
-from service.models import Product
+from service.models import Product, DataValidationError
 
 # Import Flask application
 from . import app, api
