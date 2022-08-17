@@ -12,7 +12,7 @@ Describe what your service does here
 from flask import request, abort  # url_for, jsonify
 from flask_restx import Resource, fields, reqparse, inputs  # Api,
 from service.utils import status  # HTTP Status Codes
-from service.models import Product
+from service.models import Product, DataValidationError
 
 # Import Flask application
 from . import app, api
@@ -302,8 +302,8 @@ class ProductCollection(Resource):
         product = Product()
         try:
             product.deserialize(data)
-        except ValueError:
-            return "", status.HTTP_406_NOT_ACCEPTABLE
+        except DataValidationError:
+            return "", status.HTTP_400_BAD_REQUEST
         app.logger.info("Here Deserialization done")
         product.create()
         message = product.serialize()
