@@ -302,7 +302,7 @@ class ProductCollection(Resource):
         product = Product()
         try:
             product.deserialize(data)
-        except ValueError:
+        except DataValidationError:
             return "", status.HTTP_406_NOT_ACCEPTABLE
         app.logger.info("Here Deserialization done")
         product.create()
