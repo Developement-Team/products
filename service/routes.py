@@ -12,12 +12,12 @@ Describe what your service does here
 from flask import request, abort  # url_for, jsonify
 from flask_restx import Resource, fields, reqparse, inputs  # Api,
 from service.utils import status  # HTTP Status Codes
-from service.models import Product, MIN_PRICE, MAX_PRICE, MAX_DESCRIPTION_LENGTH
+from service.models import Product
 
 # Import Flask application
 from . import app, api
 
-MAX_CATEGORY_LENGTH = 63
+
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -131,7 +131,7 @@ class ProductResource(Resource):
     # ------------------------------------------------------------------
     # UPDATE AN EXISTING PRODUCT
     # ------------------------------------------------------------------
-    @api.doc('update_pets', security='apikey')
+    @api.doc('update_products', security='apikey')
     @api.response(404, 'Product not found')
     @api.response(400, 'The posted Product data was not valid')
     @api.expect(product_model)
@@ -151,7 +151,7 @@ class ProductResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 f"Product with id '{product_id}' was not found.",
             )
-        app.logger.info('Payload = %s ', api.payload)
+        app.logger.debug('Payload = %s ', api.payload)
         data = api.payload
         product.deserialize(data)
         product.id = product_id
@@ -162,7 +162,7 @@ class ProductResource(Resource):
     # ------------------------------------------------------------------
     # DELETE A PRODUCT
     # ------------------------------------------------------------------
-    @api.response(204, 'Pet deleted')
+    @api.response(204, 'Product deleted')
     def delete(self, product_id):
         """Delete a Product"""
         app.logger.info("Request to delete product with id: %s", product_id)
@@ -286,8 +286,8 @@ class ProductCollection(Resource):
         """
         app.logger.info("Request to create a product")
         check_content_type("application/json")
+        app.logger.debug('Payload = %s', api.payload)
         data = api.payload
-        app.logger.info("Post Args : %s ", data)
         data["rating"] = (
             None
             if "rating" not in data or data["rating"] is None
@@ -325,6 +325,8 @@ class RatingResource(Resource):
     @api.doc('Update The Rating')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the rating of a product on the basis of feedback provided.
@@ -342,6 +344,7 @@ class RatingResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.info('Payload = %s ', api.payload)
         new_rating = api.payload
         if not isinstance(new_rating["rating"], int):
             abort(
@@ -384,6 +387,8 @@ class PriceResource(Resource):
     @api.doc('Update The Price')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Format Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the price of a product on the basis of feedback provided.
@@ -401,22 +406,14 @@ class PriceResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.debug('Payload = %s ', api.payload)
         new_price = api.payload
         if "price" not in new_price or new_price["price"] is None:
             abort(
                 status.HTTP_406_NOT_ACCEPTABLE,
                 description="Price should be in dict name 'price'.",
             )
-        if not isinstance(new_price["price"], float) and not isinstance(
-            new_price["price"], int
-        ):
-            abort(
-                status.HTTP_406_NOT_ACCEPTABLE,
-                description="Price should be of float or int datatype",
-            )
-        new_price["price"] = float(new_price["price"])
-        if new_price["price"] < MIN_PRICE or new_price["price"] > MAX_PRICE:
-            abort(status.HTTP_406_NOT_ACCEPTABLE, description="New price out of range.")
+        product.deserialize(new_price)
         product.price = new_price["price"]
         product.update()
         app.logger.info("Price of product with ID [%s] updated.", product.id)
@@ -436,6 +433,8 @@ class DescriptionResource(Resource):
     @api.doc('Update The Description')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Format Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the description of a product on the basis of feedback provided.
@@ -448,11 +447,12 @@ class DescriptionResource(Resource):
         check_content_type("application/json")
         product = Product.find(product_id)
         if not product:
-            app.logger.info("Product_id not found.")
+            app.logger.debug("Product_id not found.")
             abort(
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.debug('Payload = %s ', api.payload)
         new_description = api.payload
         if (
             "description" not in new_description
@@ -462,16 +462,7 @@ class DescriptionResource(Resource):
                 status.HTTP_406_NOT_ACCEPTABLE,
                 description="Description should be in dict name 'description'.",
             )
-        if not isinstance(new_description["description"], str):
-            abort(
-                status.HTTP_406_NOT_ACCEPTABLE,
-                description="Description should be of str datatype",
-            )
-        if len(new_description["description"]) > MAX_DESCRIPTION_LENGTH:
-            abort(
-                status.HTTP_406_NOT_ACCEPTABLE,
-                description="Description length over limit.",
-            )
+        product.deserialize(new_description)
         product.description = new_description["description"]
         product.update()
         app.logger.info("Description of product with ID [%s] updated.", product.id)
@@ -491,6 +482,8 @@ class CategoryResource(Resource):
     @api.doc('Update The Category')
     @api.response(404, 'Product not found')
     @api.response(406, 'JSON Format Not acceptable')
+    @api.expect(product_model)
+    @api.marshal_with(product_model)
     def put(self, product_id):
         """
         Updates the category of a product on the basis of feedback provided.
@@ -508,25 +501,17 @@ class CategoryResource(Resource):
                 status.HTTP_404_NOT_FOUND,
                 description=f"Product with id '{product_id}' was not found.",
             )
+        app.logger.debug('Payload = %s ', api.payload)
         new_category = api.payload
         if "category" not in new_category or new_category["category"] is None:
             abort(
                 status.HTTP_406_NOT_ACCEPTABLE,
                 description="Category should be in dict name 'category'.",
             )
-        if not isinstance(new_category["category"], str):
-            abort(
-                status.HTTP_406_NOT_ACCEPTABLE,
-                description="Category should be of str datatype",
-            )
-        if len(new_category["category"]) > MAX_CATEGORY_LENGTH:
-            abort(
-                status.HTTP_406_NOT_ACCEPTABLE,
-                description="Category length over limit.",
-            )
+        product.deserialize(new_category)
         product.category = new_category["category"]
         product.update()
-        app.logger.info("Description of product with ID [%s] updated.", product.id)
+        app.logger.info("Category of product with ID [%s] updated.", product.id)
         return product.serialize(), status.HTTP_200_OK
 
 

@@ -19,6 +19,7 @@ MAX_PRICE = 100.00
 MIN_RATE = 0
 MAX_RATE = 5
 MAX_DESCRIPTION_LENGTH = 63
+MAX_CATEGORY_LENGTH = 63
 logger = logging.getLogger("flask.app")
 
 # Create the SQLAlchemy object to be initialized later in init_db()
@@ -110,7 +111,7 @@ class Product(db.Model):
             else:
                 raise DataValidationError("Invalid range for [price]: " + str(price))
         else:
-            raise DataValidationError(
+            raise TypeError(
                 "Invalid type for float [price]: " + str(type(price))
             )
 
@@ -164,6 +165,9 @@ class Product(db.Model):
     def check_description(self, description):
         if not isinstance(description, str):
             raise TypeError
+        elif len(description) > MAX_DESCRIPTION_LENGTH:
+            raise DataValidationError(
+                "Description length over limit.")
         else:
             self.description = description
 
@@ -173,6 +177,9 @@ class Product(db.Model):
         elif category == "":
             raise DataValidationError(
                 "category field cannot be empty ")
+        elif len(category) > MAX_CATEGORY_LENGTH:
+            raise DataValidationError(
+                "Category length over limit ")
         else:
             self.category = category
 

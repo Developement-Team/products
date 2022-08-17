@@ -555,7 +555,7 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_price_bad_price(self):
-        """It should return 406 for bad price in update price"""
+        """It should return 406 for no price in update price"""
         # create a product to update
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
@@ -569,12 +569,21 @@ class TestYourResourceServer(TestCase):
         new_product["price"] = None
         response = self.client.put(f"{BASE_URL}/{id}/price", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+    def test_update_bad_price(self):
+        """It should return 400 for invalid price in update price"""
+        # create a product to update
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        id = response.get_json()["id"]
+        new_product = {}
         new_product["price"] = MAX_PRICE + 1
         response = self.client.put(f"{BASE_URL}/{id}/price", json=new_product)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         new_product["price"] = str(MAX_PRICE)
         response = self.client.put(f"{BASE_URL}/{id}/price", json=new_product)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_description_bad_id(self):
         """It should return 404 for bad id in update description"""
@@ -591,7 +600,7 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_description_bad_price(self):
-        """It should return 406 for bad description in update description"""
+        """It should return 406 for no description in update description"""
         # create a product to update
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
@@ -605,12 +614,23 @@ class TestYourResourceServer(TestCase):
         new_product["description"] = None
         response = self.client.put(f"{BASE_URL}/{id}/description", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+    def test_update_bad_description(self):
+        """It should return 400 for bad description in update description"""
+        # create a product to update
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        id = int(response.get_json()["id"])
+
+        # update the product description
+        new_product = {}
         new_product["description"] = 1
         response = self.client.put(f"{BASE_URL}/{id}/description", json=new_product)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         new_product["description"] = "a" * (MAX_DESCRIPTION_LENGTH + 1)
         response = self.client.put(f"{BASE_URL}/{id}/description", json=new_product)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_update_category_bad_id(self):
         """It should return 404 for bad id in update category"""
@@ -628,7 +648,7 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_category_bad_type(self):
-        """It should return 406 for bad category in update category"""
+        """It should return 406 for no category in update category"""
         # create a product to update
         test_product = ProductFactory()
         response = self.client.post(BASE_URL, json=test_product.serialize())
@@ -642,9 +662,20 @@ class TestYourResourceServer(TestCase):
         new_product["category"] = None
         response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
+    def test_update_bad_category(self):
+        """It should return 400 for bad category in update category"""
+        # create a product to update
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        id = int(response.get_json()["id"])
+
+        # update the product category
+        new_product = {}
         new_product["category"] = 1
         response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         new_product["category"] = "a" * (MAX_CATEGORY_LENGTH + 1)
         response = self.client.put(f"{BASE_URL}/{id}/category", json=new_product)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
