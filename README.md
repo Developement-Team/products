@@ -150,14 +150,6 @@ For example : `GET /products?rating=3&price=50` will return the list of all prod
     ├── test_models.py
     └── test_routes.py
 ```
-
-## License
-
-Copyright (c) John Rofrano. All rights reserved.
-
-Licensed under the Apache License. See [LICENSE](LICENSE)
-
-This repository is part of the NYU masters class: **CSCI-GA.2820-001 DevOps and Agile Methodologies** created and taught by *John Rofrano*, Adjunct Instruct
 ## License
 
 Copyright (c) John Rofrano. All rights reserved.
