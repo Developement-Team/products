@@ -58,16 +58,16 @@ behave
 We provide a Swagger API Documentation [here](http://159.122.174.17:31002/apidocs). You can see the details of the Product Model and route services we provide. You can try the functionalities out using the Swagger API. Main routes are also listed below in the chart: 
 | Endpoint                                  | Method    | Description |
 |-------------------------------------------|-----------|-------------|
-|`/products   `                               | **POST**      | Creates a new Product |
-|`/products/<int:product_id>    `             | **DELETE**    | Deletes a product with the given product_id |
+|`api/products   `                               | **POST**      | Creates a new Product |
+|`api/products/<int:product_id>    `             | **DELETE**    | Deletes a product with the given product_id |
 |`/ `                                         | **GET**       | Gets the details of all available API's |
-|`/products `                                 | **GET**       | Gets the details of all the products |
-|`/products/<int:product_id>    `             | **GET**       | Get the details of a particular product |
-`/products/<int:product_id>        `         | **PUT**       | Updates multiple fields of a product |
-|`/products/<int:product_id>/category     `   | **PUT**       | Updates the category of the product |
-|`/products/<int:product_id>/description `    | **PUT**       | Updates the description of a product |
-|`/products/<int:product_id>/price   `        | **PUT**       | Updates the price of a product |
-|`/products/<int:product_id>/rating`          | **PUT**       | Updates the rating of a product |
+|`api/products `                                 | **GET**       | Gets the details of all the products |
+|`api/products/<int:product_id>    `             | **GET**       | Get the details of a particular product |
+`api/products/<int:product_id>        `         | **PUT**       | Updates multiple fields of a product |
+|`api/products/<int:product_id>/category     `   | **PUT**       | Updates the category of the product |
+|`api/products/<int:product_id>/description `    | **PUT**       | Updates the description of a product |
+|`api/products/<int:product_id>/price   `        | **PUT**       | Updates the price of a product |
+|`api/products/<int:product_id>/rating`          | **PUT**       | Updates the rating of a product |
 
 The method : `GET /products` supports Query Strings with multiple constraints.  
 For example : `GET /products?rating=3&price=50` will return the list of all products with `Rating >= 3` and `Price <= 50`.  
