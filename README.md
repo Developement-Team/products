@@ -5,9 +5,7 @@
 [![Build Status](https://github.com/Products-Development-Team/products/actions/workflows/bdd.yml/badge.svg)](https://github.com/Products-Development-Team/products/actions)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
 [![codecov](https://codecov.io/gh/Products-Development-Team/products/branch/master/graph/badge.svg?token=PZG0GGW7VJ)](https://codecov.io/gh/Products-Development-Team/products)
-
-This is an NYU DevOps project that creates a RESTful microservice of Products using Python Flask and PostgreSQL. The application is currently deployed to a Kubernetes cluster on IBM cloud. The IP address is [**here**](http://159.122.174.17:31002/). You can also run it locally with the following setup. 
-
+- [Overview](#overview)
 - [Prerequisites](#prerequisites)
   - [Software Installation](#software-installation)
   - [Bring up development environment](#bring-up-development-environment)
@@ -16,8 +14,11 @@ This is an NYU DevOps project that creates a RESTful microservice of Products us
   - [Run BDD tests](#run-bdd-tests)
   - [RESTful API](#restful-api)
 - [Features in the project](#features-in-the-project)
+- [Project File Structure](#project-file-structure)
 - [License](#license)
 
+## Overview
+This is an NYU DevOps project that creates a RESTful microservice using Python Flask and PostgreSQL. In particular, we have created a Product Resource as an important part of a E-commerce website. We utilized the template code provided at https://github.com/nyu-devops/ by Professor Rofrano arcoss various repositories. The application is currently deployed to a Kubernetes cluster on IBM cloud. The IP address is [**here**](http://159.122.174.17:31002/). You can also run it locally with the following setup. 
 
 ## Prerequisites
 ### Software Installation
@@ -78,6 +79,85 @@ For example : `GET /products?rating=3&price=50` will return the list of all prod
 * app/models.py -- the data model using SQLAlchemy
 * tests/test_routes.py -- test cases against the Product service
 * tests/test_models.py -- test cases against the Product model
+
+## Project File Structure
+```text
+.
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── Procfile
+├── README.md
+├── __pycache__
+│   └── config.cpython-39.pyc
+├── config.py
+├── coverage.xml
+├── deploy
+│   ├── deployment.yaml
+│   ├── postgresql.yaml
+│   ├── service.yaml
+│   ├── dev.yaml
+├── dot-env-example
+├── features
+│   ├── environment.py
+│   ├── steps
+│   │   ├── web_steps.py
+│   │   └── products_steps.py
+│   └── products.feature
+├── requirements.txt
+├── service
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-39.pyc
+|   |   ├── config.cpython-39.pyc
+│   │   ├── models.cpython-39.pyc
+│   │   └── routes.cpython-39.pyc
+│   ├── models.py
+│   ├── routes.py
+│   ├── static
+│   │   ├── css
+│   │   │   ├── blue_bootstrap.min.css
+│   │   │   ├── cerulean_bootstrap.min.css
+│   │   │   ├── darkly_bootstrap.min.css
+│   │   │   ├── flatly_bootstrap.min.css
+│   │   │   └── slate_bootstrap.min.css
+│   │   ├── images
+│   │   │   └── newapp-icon.png
+│   │   ├── index.html
+│   │   └── js
+│   │       ├── bootstrap.min.js
+│   │       ├── jquery-3.6.0.min.js
+│   │       └── rest_api.js
+│   └── utils
+│       ├── __pycache__
+│       │   ├── cli_commands.cpython-39.pyc
+│       │   ├── error_handlers.cpython-39.pyc
+│       │   ├── log_handlers.cpython-39.pyc
+│       │   └── status.cpython-39.pyc
+│       ├── cli_commands.py
+│       ├── error_handlers.py
+│       ├── log_handlers.py
+│       └── status.py
+├── setup.cfg
+└── tests
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-39.pyc
+    │   ├── factories.cpython-39.pyc
+    │   ├── test_models.cpython-39.pyc
+    │   └── test_routes.cpython-39.pyc
+    ├── factories.py
+    ├── test_models.py
+    └── test_routes.py
+```
+
+## License
+
+Copyright (c) John Rofrano. All rights reserved.
+
+Licensed under the Apache License. See [LICENSE](LICENSE)
+
+This repository is part of the NYU masters class: **CSCI-GA.2820-001 DevOps and Agile Methodologies** created and taught by *John Rofrano*, Adjunct Instruct
 ## License
 
 Copyright (c) John Rofrano. All rights reserved.
