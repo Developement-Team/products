@@ -3,16 +3,10 @@ My Service
 
 Describe what your service does here
 """
-
-# import os
-# import sys
-# import logging
-# from flask import Flask, request, url_for, jsonify, make_response, abort
-# from importlib.metadata import requires
-from flask import request, abort  # url_for, jsonify
-from flask_restx import Resource, fields, reqparse, inputs  # Api,
-from service.utils import status  # HTTP Status Codes
-from service.models import Product, DataValidationError
+from flask import request, abort
+from flask_restx import Resource, fields, reqparse, inputs
+from service.utils import status
+from service.models import Product
 
 # Import Flask application
 from . import app, api
@@ -300,10 +294,7 @@ class ProductCollection(Resource):
         )
 
         product = Product()
-        try:
-            product.deserialize(data)
-        except DataValidationError:
-            return "", status.HTTP_400_BAD_REQUEST
+        product.deserialize(data)
         app.logger.info("Here Deserialization done")
         product.create()
         message = product.serialize()
