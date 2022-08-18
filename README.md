@@ -6,9 +6,21 @@
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
 [![codecov](https://codecov.io/gh/Products-Development-Team/products/branch/master/graph/badge.svg?token=PZG0GGW7VJ)](https://codecov.io/gh/Products-Development-Team/products)
 
-This is an NYU DevOps project that creates a RESTful microservice using Python Flask and PostgreSQL. 
+This is an NYU DevOps project that creates a RESTful microservice of Products using Python Flask and PostgreSQL. The application is currently deployed to a Kubernetes cluster on IBM cloud. The IP address is [**here**](http://159.122.174.17:31002/). You can also run it locally with the following setup. 
 
-## Prerequisite Software Installation
+- [Prerequisites](#prerequisites)
+  - [Software Installation](#software-installation)
+  - [Bring up development environment](#bring-up-development-environment)
+- [Services](#services)
+  - [Run TDD tests](#run-tdd-tests)
+  - [Run BDD tests](#run-bdd-tests)
+  - [RESTful API](#restful-api)
+- [Features in the project](#features-in-the-project)
+- [License](#license)
+
+
+## Prerequisites
+### Software Installation
 This project uses Docker and VS Code with the Remote Containers extension to provide a consistent repeatable disposable development environment. 
 
 You will need the following software installed: 
@@ -16,7 +28,7 @@ You will need the following software installed:
 - VS Code
 - Remote Containers extension from the VS Code Marketplace
 
-## Bring up development environment
+### Bring up development environment
 To bring up the development environment you should clone this repo, change into the repo directory, and then open Visual Studio Code using the code . command. VS Code will prompt you to reopen in a container and you should select it. This will take a while the first time as it builds the Docker image and creates a container from it to develop in.
 
 ```bash
@@ -24,61 +36,26 @@ git clone git@github.com:Products-Development-Team/products.git
 cd products
 code .
 ```
-
-## Running the tests
+## Services
+### Run TDD tests
 You can run the tests in a ```bash``` terminal using the following command: 
 ```bash
 make test
 ```
 This will run the test suite and report the code coverage. 
 
-## Check PEP8 Standard
-We've included flake8, Pylint and Black in the ```requirements.txt```, you can check if the code is compliant using the following command: 
+### Run BDD tests
+You can start with a ```bash``` terminal and run the REST service using the following command:
 ```bash
-make lint
+make run
 ```
-
-## Run the REST service
-To run the service, use the same ```bash``` terminal that you ran the tests in and use 
+You should be able to open a web page on a local browser
+Then start another ```bash``` terminal and run the ```behave``` test:
 ```bash
-honcho start
-``` 
-(Press CTRL+C to exit).
-You should be able to open a web page in a local browser at: http://localhost:8000
-
-## Make REST calls
-While the service is running, you can open a second ``bash`` terminal and issue the following commands: 
-
-List all resources (Root URL):
-```bash
-http GET http://localhost:8000/
+behave
 ```
-List all products: 
-```bash
-http GET http://localhost:8000/products
-```
-Create a product: 
-```bash
-http POST localhost:8000/products name="" description="" category="" price:=<float> available:=<bool> rating:=<int>
-```
-You must specifiy the ``name``, ``description``, ``category``, ``price`` and ``availability``of the product.   
-The following fields are optional : ``rating``, ``Number of People who rated the product``  
-- Acceptable price is within range: ``10.0-100.0``
-- Acceptable rating is between ``0-5``
-
-Read a product:
-```bash
-http GET localhost:8000/products/<int:product_id>
-```
-Update a product: 
-```bash
-http PUT localhost:8000/products/<int:product_id>
-```
-Delete a product: 
-```bash
-http DELETE localhost:8000/products/<int:product_id>
-```
-
+### RESTful API
+We provide a Swagger API Documentation [here](http://159.122.174.17:31002/apidocs). You can see the details of the Product Model and route services we provide. You can try the functionalities out using the Swagger API. Main routes are also listed below in the chart: 
 | Endpoint                                  | Method    | Description |
 |-------------------------------------------|-----------|-------------|
 |`/products   `                               | **POST**      | Creates a new Product |
@@ -96,7 +73,7 @@ The method : `GET /products` supports Query Strings with multiple constraints.
 For example : `GET /products?rating=3&price=50` will return the list of all products with `Rating >= 3` and `Price <= 50`.  
 
 
-## What's featured in the project? 
+## Features in the project
 * app/routes.py -- the main Service routes using Python Flask
 * app/models.py -- the data model using SQLAlchemy
 * tests/test_routes.py -- test cases against the Product service
